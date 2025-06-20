@@ -1,0 +1,1 @@
+# Wisesight-Sentiment-Corpus-Thai
