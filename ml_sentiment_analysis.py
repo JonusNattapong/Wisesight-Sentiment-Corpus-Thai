@@ -391,7 +391,7 @@ class ThaiSentimentMLModel:
 
 class ThaiTransformerModel:
     """Thai Sentiment Analysis with Transformer Models from Hugging Face"""
-    
+    MAX_LEN = 512  # ป้องกันข้อความยาวเกิน
     def __init__(self, model_name: str = "twitter-roberta"):        # รายการโมเดลที่เป็น public และไม่ต้องการ authentication
         self.available_models = {
             # Multilingual sentiment models (public)
@@ -422,6 +422,10 @@ class ThaiTransformerModel:
             "distilbert-base-uncased-finetuned-sst-2-english",  # Known working English model
         ]
     
+    def _safe_truncate(self, text, max_len=512):
+        # ตัดข้อความที่ยาวเกิน max_len ตัวอักษร (หรือจะใช้ tokenizer ตัดก็ได้)
+        return text[:max_len]
+
     def initialize(self):
         """เริ่มต้น transformer model พร้อม fallback"""
         if not TRANSFORMERS_AVAILABLE:
@@ -545,32 +549,33 @@ class ThaiTransformerModel:
         """ทำนาย sentiment ด้วย transformer"""
         if self.pipeline is None:
             self.initialize()
-        
         # ประมวลผลข้อความ
         processed_text = self.preprocessor.clean_text(text)
-        
         try:
-            # ทำนาย
-            results = self.pipeline(processed_text)
-            
+            # ทำนาย (force truncation at tokenizer level)
+            if hasattr(self.pipeline, 'tokenizer') and hasattr(self.pipeline, 'model'):
+                # Huggingface pipeline: inject truncation
+                results = self.pipeline(
+                    processed_text,
+                    truncation=True,
+                    max_length=512,
+                    padding=True
+                )
+            else:
+                # fallback: just call pipeline
+                results = self.pipeline(processed_text)
             # แปลงผลลัพธ์
             if isinstance(results[0], list):
                 results = results[0]  # unwrap if nested
-            
-            # หา sentiment ที่มี confidence สูงสุด
             best_result = max(results, key=lambda x: x['score'])
             sentiment = best_result['label'].lower()
             confidence = best_result['score']
-            
-            # แปลง label ให้เป็นมาตรฐาน
             label_mapping = {
                 'negative': 'negative', 'neg': 'negative', 'label_0': 'negative',
                 'neutral': 'neutral', 'neu': 'neutral', 'label_1': 'neutral', 
                 'positive': 'positive', 'pos': 'positive', 'label_2': 'positive'
             }
             sentiment = label_mapping.get(sentiment, 'neutral')
-            
-            # คำนวณ sentiment score
             sentiment_score = 0.0
             for result in results:
                 label = label_mapping.get(result['label'].lower(), 'neutral')
@@ -578,13 +583,10 @@ class ThaiTransformerModel:
                     sentiment_score += result['score']
                 elif label == 'negative':
                     sentiment_score -= result['score']
-            
-            # สร้าง probabilities dict
             probabilities = {'positive': 0.0, 'neutral': 0.0, 'negative': 0.0}
             for result in results:
                 label = label_mapping.get(result['label'].lower(), 'neutral')
                 probabilities[label] = result['score']
-            
             return {
                 'sentiment': sentiment,
                 'confidence': confidence,
@@ -592,7 +594,6 @@ class ThaiTransformerModel:
                 'probabilities': probabilities,
                 'model_type': 'transformer'
             }
-            
         except Exception as e:
             print(f"[ERROR] Transformer prediction failed: {e}")
             # Fallback to neutral
@@ -1324,3 +1325,12 @@ def benchmark_sentiment_models():
             
     except Exception as e:
         print(f"❌ ไม่สามารถทดสอบ ensemble ได้: {e}")
+
+# --- EXPORT: analyze_sentiment ---
+_advanced_analyzer = None
+def analyze_sentiment(text: str):
+    global _advanced_analyzer
+    if _advanced_analyzer is None:
+        _advanced_analyzer = AdvancedThaiSentimentAnalyzer()
+        _advanced_analyzer.initialize()
+    return _advanced_analyzer.analyze_with_review(text)

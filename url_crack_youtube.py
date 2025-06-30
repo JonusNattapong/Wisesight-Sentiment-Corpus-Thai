@@ -275,7 +275,7 @@ print(f"📊 รวมลิงก์จาก API: {len(all_links)} ราย�
 all_links = list(set(all_links))[:1800]
 final_links = all_links[:1500]
 
-output_file = "youtube_real_links_1500.txt"
+output_file = "youtube_real_links_batch.txt"
 with open(output_file, "w", encoding="utf-8") as f:
     for link in final_links:
         f.write(link + "\n")
