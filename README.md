@@ -1,5 +1,9 @@
 # Wisesight-Sentiment-Corpus-Thai
 
+<p align="center">
+  <img src="assets/logo.png" alt="WiseSight Sentiment Corpus Thai Logo" width="320"/>
+</p>
+
 ## 📑 Table of Contents
 - [Project Overview](#project-overview)
 - [Quick Start](#quick-start)
@@ -111,15 +115,27 @@
 
 ```mermaid
 flowchart TD
-    A[เริ่มต้น: เตรียม Python + ติดตั้ง dependencies] --> B[ตั้งค่า .env ใส่ YOUTUBE_API_KEY]
-    B --> C[สร้างไฟล์ลิงก์วิดีโอ (url_crack_youtube.py)]
-    C --> D[ตรวจสอบ/เลือกไฟล์ลิงก์ เช่น youtube_real_links_1500.txt]
-    D --> E[ดึงคอมเมนต์แบบ batch (app.py)]
-    E --> F[วิเคราะห์ sentiment (ML/ensemble)]
-    F --> G[จัดการ privacy (mask/remove PII, hash/remove author)]
+    A[Setup Python & Install Deps] --> B[Set .env YOUTUBE_API_KEY]
+    B --> C[Gen YouTube Links (url_crack_youtube.py)]
+    C --> D[Select Link File (e.g. youtube_real_links_1500.txt)]
+    D --> E[Batch Comment Extraction (app.py)]
+    E --> F[Sentiment Analysis (ML/ensemble)]
+    F --> G[Privacy (mask/remove PII, anonymize)]
     G --> H[Export: JSONL/CSV/TXT]
-    H --> I[Post-process (รวมไฟล์, แปลง format)]
-    I --> J[ใช้งานข้อมูลต่อ (ML, วิจัย, วิเคราะห์)]
+    H --> I[Post-process (merge/convert)]
+    I --> J[Use Data (ML, Research, Analytics)]
 ```
+
+**คำอธิบายขั้นตอน (ภาษาไทย):**
+1. เตรียม Python และติดตั้ง dependencies
+2. ตั้งค่า API Key ใน .env
+3. สร้างไฟล์ลิงก์วิดีโอ YouTube
+4. เลือกไฟล์ลิงก์ที่ต้องการ
+5. ดึงคอมเมนต์แบบ batch
+6. วิเคราะห์ sentiment
+7. จัดการ privacy (mask/remove PII, anonymize author)
+8. Export ข้อมูล (JSONL/CSV/TXT)
+9. Post-process (รวมไฟล์, แปลง format)
+10. นำข้อมูลไปใช้งานต่อ (ML, วิจัย, วิเคราะห์)
 
 ---
