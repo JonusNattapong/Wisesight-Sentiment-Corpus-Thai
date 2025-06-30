@@ -116,14 +116,14 @@
 ```mermaid
 flowchart TD
     A[Setup Python & Install Deps] --> B[Set .env YOUTUBE_API_KEY]
-    B --> C[Gen YouTube Links (url_crack_youtube.py)]
-    C --> D[Select Link File (e.g. youtube_real_links_1500.txt)]
-    D --> E[Batch Comment Extraction (app.py)]
-    E --> F[Sentiment Analysis (ML/ensemble)]
-    F --> G[Privacy (mask/remove PII, anonymize)]
+    B --> C[Gen YouTube Links]
+    C --> D[Select Link File]
+    D --> E[Batch Comment Extraction]
+    E --> F[Sentiment Analysis]
+    F --> G[Privacy (mask/remove/anonymize)]
     G --> H[Export: JSONL/CSV/TXT]
-    H --> I[Post-process (merge/convert)]
-    I --> J[Use Data (ML, Research, Analytics)]
+    H --> I[Post-process]
+    I --> J[Use Data]
 ```
 
 **คำอธิบายขั้นตอน (ภาษาไทย):**
