@@ -115,13 +115,13 @@
 
 ```mermaid
 flowchart TD
-    A[Setup Python & Install Deps] --> B[Set .env YOUTUBE_API_KEY]
-    B --> C[Gen YouTube Links]
+    A[Setup Python] --> B[Set API Key]
+    B --> C[Gen Links]
     C --> D[Select Link File]
-    D --> E[Batch Comment Extraction]
-    E --> F[Sentiment Analysis]
-    F --> G[Privacy (mask/remove/anonymize)]
-    G --> H[Export: JSONL/CSV/TXT]
+    D --> E[Extract Comments]
+    E --> F[Sentiment]
+    F --> G[Privacy]
+    G --> H[Export]
     H --> I[Post-process]
     I --> J[Use Data]
 ```
@@ -133,8 +133,8 @@ flowchart TD
 4. เลือกไฟล์ลิงก์ที่ต้องการ
 5. ดึงคอมเมนต์แบบ batch
 6. วิเคราะห์ sentiment
-7. จัดการ privacy (mask/remove PII, anonymize author)
-8. Export ข้อมูล (JSONL/CSV/TXT)
+7. จัดการ privacy
+8. Export ข้อมูล
 9. Post-process (รวมไฟล์, แปลง format)
 10. นำข้อมูลไปใช้งานต่อ (ML, วิจัย, วิเคราะห์)
 
