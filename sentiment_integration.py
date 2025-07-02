@@ -38,48 +38,64 @@ def analyze_detailed_sentiment(
         Dict ที่มีผลการวิเคราะห์
     """
     analyzer = get_detailed_analyzer()
-    
-    if mode == "single":
-        result = analyzer.analyze_single_label(text)
-        
-        # แปลงให้เข้ากับ format เดิม
-        formatted_result = {
-            "text": text,
-            "sentiment": _map_emotion_to_sentiment(result["label"]),
-            "detailed_emotion": result["label"],
-            "emotion_group": result["group"],
-            "confidence": result["confidence"],
-            "context": result["context"],
-            "analysis_mode": "single_label"
-        }
-        
-        if include_scores:
-            formatted_result["all_scores"] = result["scores"]
-            
-    elif mode == "multi":
-        result = analyzer.analyze_multi_label(text, threshold=threshold)
-        
-        # สำหรับ multi-label ใช้อารมณ์หลักเป็น sentiment
-        primary_emotion = result["labels"][0] if result["labels"] else "เฉย ๆ"
-        
-        formatted_result = {
-            "text": text,
-            "sentiment": _map_emotion_to_sentiment(primary_emotion),
-            "detailed_emotions": result["labels"],
-            "emotion_groups": result["groups"],
-            "primary_emotion": primary_emotion,
-            "context": result["context"],
-            "threshold": threshold,
-            "analysis_mode": "multi_label"
-        }
-        
-        if include_scores:
-            formatted_result["all_scores"] = result["scores"]
-    
-    else:
-        raise ValueError(f"Invalid mode: {mode}. Use 'single' or 'multi'")
-    
-    return formatted_result
+    try:
+        if mode == "single":
+            result = analyzer.analyze_single_label(text)
+            formatted_result = {
+                "text": text,
+                "sentiment": _map_emotion_to_sentiment(result.get("label", "เฉย ๆ")),
+                "detailed_emotion": result.get("label", "เฉย ๆ"),
+                "emotion_group": result.get("group", "Neutral"),
+                "confidence": result.get("confidence", 0.0),
+                "context": result.get("context", {}),
+                "analysis_mode": "single_label"
+            }
+            if include_scores:
+                formatted_result["all_scores"] = result.get("scores", {})
+        elif mode == "multi":
+            result = analyzer.analyze_multi_label(text, threshold=threshold)
+            labels = result.get("labels", [])
+            primary_emotion = labels[0] if labels else "เฉย ๆ"
+            formatted_result = {
+                "text": text,
+                "sentiment": _map_emotion_to_sentiment(primary_emotion),
+                "detailed_emotions": labels,
+                "emotion_groups": result.get("groups", []),
+                "primary_emotion": primary_emotion,
+                "context": result.get("context", {}),
+                "threshold": threshold,
+                "analysis_mode": "multi_label"
+            }
+            if include_scores:
+                formatted_result["all_scores"] = result.get("scores", {})
+        else:
+            raise ValueError(f"Invalid mode: {mode}. Use 'single' or 'multi'")
+        return formatted_result
+    except Exception as e:
+        # กรณีเกิดข้อผิดพลาด ให้คืนค่า default ที่ไม่ทำให้ระบบล่ม
+        if mode == "single":
+            return {
+                "text": text,
+                "sentiment": "neutral",
+                "detailed_emotion": "เฉย ๆ",
+                "emotion_group": "Neutral",
+                "confidence": 0.0,
+                "context": {},
+                "analysis_mode": "single_label",
+                "error": str(e)
+            }
+        else:
+            return {
+                "text": text,
+                "sentiment": "neutral",
+                "detailed_emotions": ["เฉย ๆ"],
+                "emotion_groups": ["Neutral"],
+                "primary_emotion": "เฉย ๆ",
+                "context": {},
+                "threshold": threshold,
+                "analysis_mode": "multi_label",
+                "error": str(e)
+            }
 
 def _map_emotion_to_sentiment(emotion: str) -> str:
     """แปลงอารมณ์เป็น sentiment แบบเดิม (positive/negative/neutral)"""

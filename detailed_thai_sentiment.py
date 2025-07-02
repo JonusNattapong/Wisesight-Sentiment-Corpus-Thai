@@ -211,10 +211,52 @@ class ThaiEmotionPatterns:
     def _build_context_patterns(self) -> Dict[str, List[str]]:
         """สร้าง patterns สำหรับบริบทการใช้ภาษา"""
         return {
-            "formal": ["ครับ", "ค่ะ", "คะ", "ขอ", "กรุณา", "สวัสดี", "ขอบคุณ"],
-            "informal": ["นะ", "เนอะ", "อะ", "เอ้ย", "เออ", "ของ", "555", "ฮา"],
-            "slang": ["โคตร", "เฟี้ยว", "เทพ", "แม่ง", "ควย", "บิน", "เฟี้ยม"],
-            "personal": ["กู", "มึง", "เรา", "ฉัน", "คิด", "รู้สึก"]
+            # === ระดับความเป็นทางการ ===
+            "formal": ["ครับ", "ค่ะ", "คะ", "ขอ", "กรุณา", "สวัสดี", "ขอบคุณ", "ท่าน", "คุณ", "พี่", "น้อง", "เรียน", "ด้วยความเคารพ"],
+            "informal": ["นะ", "เนอะ", "อะ", "เอ้ย", "เออ", "ของ", "555", "ฮา", "จ้ะ", "จ๋า", "ว่ะ", "วะ", "เฮ้ย"],
+            "slang": ["โคตร", "เฟี้ยว", "เทพ", "แม่ง", "ควย", "บิน", "เฟี้ยม", "ชิบ", "เด็ด", "ปัง", "ห่วย", "ซวย"],
+            
+            # === ความสัมพันธ์ส่วนตัว ===
+            "personal": ["กู", "มึง", "เรา", "ฉัน", "คิด", "รู้สึก", "ใจ", "หัวใจ", "ตัวเอง", "ส่วนตัว"],
+            "intimate": ["ที่รัก", "หวานใจ", "ดาร์ลิ่ง", "ฮันนี่", "เบบี้", "คนดี", "เสือ", "หนูเอง"],
+            "friendly": ["เพื่อน", "เฟร้น", "พวกเรา", "แก๊ง", "กลุ่ม", "คนเก่า", "พี่น้อง"],
+            
+            # === บริบทสื่อสังคม ===
+            "social_media": ["แชร์", "ไลค์", "คอมเมนต์", "โพสต์", "แท็ก", "เฟสบุ๊ค", "ไอจี", "ทวิตเตอร์", "ติ๊กต๊อก", "ยูทูป"],
+            "news_media": ["ข่าว", "รายงาน", "แจ้งข่าว", "ข้อมูล", "อัปเดต", "ประกาศ", "แถลงการณ์", "สำคัญ", "ด่วน"],
+            "review": ["รีวิว", "ทดลอง", "ใช้ดู", "ลอง", "ประสบการณ์", "คุณภาพ", "บริการ", "สินค้า", "ร้าน"],
+            
+            # === บริบทอารมณ์ ===
+            "complaint": ["บ่น", "ร้องเรียน", "แจ้งปัญหา", "ไม่ได้", "เสีย", "ห่วย", "แย่", "ผิดพลาด", "ช้า"],
+            "praise": ["ชม", "ยกย่อง", "ดี", "เยี่ยม", "ประทับใจ", "ชอบ", "รัก", "สุดยอด", "เจ๋ง", "เทพ"],
+            "question": ["ครับ", "คะ", "มั้ย", "หรือ", "ไหม", "อะไร", "ทำไม", "ยังไง", "เมื่อไหร่", "ที่ไหน"],
+            
+            # === บริบทสถานการณ์ ===
+            "emergency": ["ด่วน", "เร่งด่วน", "ฉุกเฉิน", "ช่วย", "ปัญหา", "เสีย", "พัง", "อันตราย", "วิกฤต"],
+            "celebration": ["ยินดี", "แสดงความยินดี", "ขอแสดงความยินดี", "ดีใจ", "ปลื้มปีติ", "เฮง", "โชคดี"],
+            "condolence": ["เสียใจ", "แสดงความเสียใจ", "ขอแสดงความเสียใจ", "เศร้า", "อาลัย", "คิดถึง"],
+            
+            # === บริบทวัฒนธรรม ===
+            "religious": ["บุญ", "กรรม", "ธรรม", "พระ", "วัด", "นมัสการ", "ไหว้", "ศาสนา", "บาป", "กุศล"],
+            "traditional": ["ประเพณี", "วัฒนธรรม", "ไทย", "โบราณ", "ดั้งเดิม", "ภูมิปัญญา", "ชาวบ้าน"],
+            "modern": ["ทันสมัย", "โมเดิร์น", "ไฮเทค", "ดิจิทัล", "ออนไลน์", "แอป", "ไอที", "เทคโนโลยี"],
+            
+            # === บริบทภูมิศาสตร์ ===
+            "central": ["กรุงเทพ", "กทม", "เมืองหลวง", "ภาคกลาง", "จังหวัดใกล้เคียง"],
+            "northern": ["เชียงใหม่", "ภาคเหนือ", "ล้านนา", "คำเมือง", "นา", "ป่า"],
+            "southern": ["ใต้", "ภาคใต้", "ทะเล", "ปลา", "ยางพารา", "ปาล์ม"],
+            "northeastern": ["อีสาน", "ภาคอีสาน", "ส้มตำ", "ลาว", "ข้าวเหนียว", "แจ่ว"],
+            
+            # === บริบทอายุ/รุ่น ===
+            "gen_z": ["ปัง", "เด็ด", "ฟิน", "ชิล", "เฟล็กซ์", "โบ", "ลิต", "ไวบ์", "คอนเทนต์"],
+            "millennial": ["โอเค", "เฟส", "ไลน์", "อินสตา", "ซีรี่ย์", "ยูทูป", "กูเกิล"],
+            "gen_x": ["จริงหรือเปล่า", "ไม่เชื่อ", "สมัยก่อน", "ตอนหนุ่ม", "ปัจจุบัน"],
+            
+            # === บริบทวิชาชีพ ===
+            "business": ["ธุรกิจ", "การตลาด", "ขาย", "ลูกค้า", "กำไร", "ขาดทุน", "ลงทุน"],
+            "education": ["เรียน", "สอน", "ครู", "นักเรียน", "นักศึกษา", "การศึกษา", "วิชา"],
+            "healthcare": ["หมอ", "คลินิก", "โรงพยาบาล", "ยา", "รักษา", "สุขภาพ", "ป่วย"],
+            "government": ["ราชการ", "รัฐบาล", "นโยบาย", "กฎหมาย", "ระเบียบ", "ข้าราชการ"]
         }
 
 class DetailedThaiSentimentAnalyzer:
@@ -305,20 +347,55 @@ class DetailedThaiSentimentAnalyzer:
         
         return min(bonus, 1.0)  # จำกัด bonus สูงสุด
     
-    def _determine_context(self, text: str) -> str:
-        """กำหนดบริบทการใช้ภาษา"""
+    def _determine_context(self, text: str) -> Dict[str, Any]:
+        """กำหนดบริบทการใช้ภาษาแบบละเอียด"""
         clean_text = self._clean_text(text)
         context_scores = defaultdict(int)
         
+        # คำนวณคะแนนสำหรับแต่ละบริบท
         for context, words in self.patterns.context_patterns.items():
             for word in words:
                 if word in clean_text:
                     context_scores[context] += 1
         
         if not context_scores:
-            return "neutral"
+            return {
+                "primary_context": "neutral",
+                "all_contexts": {},
+                "formality_level": "neutral",
+                "social_setting": "general",
+                "emotional_tone": "neutral"
+            }
         
-        return max(context_scores, key=context_scores.get)
+        # หาบริบทหลัก
+        primary_context = max(context_scores, key=context_scores.get)
+        
+        # วิเคราะห์ระดับความเป็นทางการ
+        formality_score = {
+            "formal": context_scores.get("formal", 0),
+            "informal": context_scores.get("informal", 0),
+            "slang": context_scores.get("slang", 0)
+        }
+        formality_level = max(formality_score, key=formality_score.get) if any(formality_score.values()) else "neutral"
+        
+        # วิเคราะห์การตั้งค่าทางสังคม
+        social_contexts = ["social_media", "news_media", "review", "business", "education", "healthcare", "government"]
+        social_scores = {ctx: context_scores.get(ctx, 0) for ctx in social_contexts}
+        social_setting = max(social_scores, key=social_scores.get) if any(social_scores.values()) else "general"
+        
+        # วิเคราะห์โทนอารมณ์
+        emotional_contexts = ["complaint", "praise", "emergency", "celebration", "condolence"]
+        emotional_scores = {ctx: context_scores.get(ctx, 0) for ctx in emotional_contexts}
+        emotional_tone = max(emotional_scores, key=emotional_scores.get) if any(emotional_scores.values()) else "neutral"
+        
+        return {
+            "primary_context": primary_context,
+            "all_contexts": dict(context_scores),
+            "formality_level": formality_level,
+            "social_setting": social_setting,
+            "emotional_tone": emotional_tone,
+            "context_confidence": round(context_scores[primary_context] / len(clean_text.split()) if clean_text.split() else 0, 3)
+        }
     
     def _normalize_scores(self, scores: Dict[str, float]) -> Dict[str, float]:
         """normalize คะแนนให้อยู่ในช่วง 0-1"""
@@ -340,7 +417,12 @@ class DetailedThaiSentimentAnalyzer:
                 "group": "Neutral",
                 "confidence": 0.0,
                 "scores": {},
-                "context": "neutral",
+                "context": {
+                    "primary_context": "neutral",
+                    "formality_level": "neutral",
+                    "social_setting": "general",
+                    "emotional_tone": "neutral"
+                },
                 "analysis_type": "single_label"
             }
         
@@ -359,7 +441,7 @@ class DetailedThaiSentimentAnalyzer:
         # กำหนดกลุ่มอารมณ์
         group = LABEL_TO_GROUP.get(predicted_label, "Unknown")
         
-        # กำหนดบริบท
+        # กำหนดบริบทแบบละเอียด
         context = self._determine_context(text)
         
         return {
@@ -384,7 +466,12 @@ class DetailedThaiSentimentAnalyzer:
                 "labels": ["เฉย ๆ"],
                 "groups": ["Neutral"],
                 "scores": {},
-                "context": "neutral",
+                "context": {
+                    "primary_context": "neutral",
+                    "formality_level": "neutral",
+                    "social_setting": "general",
+                    "emotional_tone": "neutral"
+                },
                 "analysis_type": "multi_label",
                 "threshold": threshold
             }
@@ -408,7 +495,7 @@ class DetailedThaiSentimentAnalyzer:
         # กำหนดกลุ่มอารมณ์
         groups = list(set(LABEL_TO_GROUP.get(label, "Unknown") for label in predicted_labels))
         
-        # กำหนดบริบท
+        # กำหนดบริบทแบบละเอียด
         context = self._determine_context(text)
         
         return {
@@ -446,8 +533,14 @@ class DetailedThaiSentimentAnalyzer:
             "analysis_type": results[0].get("analysis_type", "unknown"),
             "emotion_counts": defaultdict(int),
             "group_counts": defaultdict(int),
-            "context_counts": defaultdict(int),
-            "avg_confidence": 0.0
+            "context_stats": {
+                "primary_context_counts": defaultdict(int),
+                "formality_level_counts": defaultdict(int),
+                "social_setting_counts": defaultdict(int),
+                "emotional_tone_counts": defaultdict(int)
+            },
+            "avg_confidence": 0.0,
+            "context_insights": {}
         }
         
         total_confidence = 0.0
@@ -467,22 +560,152 @@ class DetailedThaiSentimentAnalyzer:
                 if result["scores"]:
                     total_confidence += max(result["scores"].values())
             
-            # นับบริบท
-            context = result.get("context", "unknown")
-            stats["context_counts"][context] += 1
+            # นับบริบท (รองรับทั้งแบบเก่าและใหม่)
+            context = result.get("context", {})
+            if isinstance(context, str):
+                # แบบเก่า
+                stats["context_stats"]["primary_context_counts"][context] += 1
+            elif isinstance(context, dict):
+                # แบบใหม่ที่ละเอียด
+                stats["context_stats"]["primary_context_counts"][context.get("primary_context", "unknown")] += 1
+                stats["context_stats"]["formality_level_counts"][context.get("formality_level", "unknown")] += 1
+                stats["context_stats"]["social_setting_counts"][context.get("social_setting", "unknown")] += 1
+                stats["context_stats"]["emotional_tone_counts"][context.get("emotional_tone", "unknown")] += 1
         
         # คำนวณ confidence เฉลี่ย
         if stats["total_texts"] > 0:
             stats["avg_confidence"] = round(total_confidence / stats["total_texts"], 3)
         
+        # สร้าง context insights
+        stats["context_insights"] = self._generate_context_insights(stats["context_stats"])
+        
         # แปลงจาก defaultdict เป็น dict ธรรมดา
         stats["emotion_counts"] = dict(stats["emotion_counts"])
         stats["group_counts"] = dict(stats["group_counts"])
-        stats["context_counts"] = dict(stats["context_counts"])
+        
+        for key in stats["context_stats"]:
+            stats["context_stats"][key] = dict(stats["context_stats"][key])
         
         return stats
+    
+    def _generate_context_insights(self, context_stats: Dict[str, Dict[str, int]]) -> Dict[str, str]:
+        """สร้าง insights จากสถิติบริบท"""
+        insights = {}
+        
+        # วิเคราะห์ระดับความเป็นทางการ
+        formality = context_stats.get("formality_level_counts", {})
+        if formality:
+            most_formal = max(formality, key=formality.get)
+            insights["formality"] = f"ส่วนใหญ่ใช้ภาษาแบบ {most_formal} ({formality[most_formal]} ครั้ง)"
+        
+        # วิเคราะห์การตั้งค่าทางสังคม
+        social = context_stats.get("social_setting_counts", {})
+        if social:
+            most_social = max(social, key=social.get)
+            insights["social_setting"] = f"บริบทที่พบมากที่สุด: {most_social} ({social[most_social]} ครั้ง)"
+        
+        # วิเคราะห์โทนอารมณ์
+        emotional = context_stats.get("emotional_tone_counts", {})
+        if emotional:
+            most_emotional = max(emotional, key=emotional.get)
+            insights["emotional_tone"] = f"โทนอารมณ์หลัก: {most_emotional} ({emotional[most_emotional]} ครั้ง)"
+        
+        return insights
 
-# === UTILITY FUNCTIONS ===
+# === ADVANCED CONTEXT ANALYSIS FUNCTIONS ===
+
+def analyze_context_emotion_correlation(results: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """วิเคราะห์ความสัมพันธ์ระหว่างบริบทและอารมณ์"""
+    context_emotion_map = defaultdict(lambda: defaultdict(int))
+    
+    for result in results:
+        context = result.get("context", {})
+        if isinstance(context, dict):
+            primary_context = context.get("primary_context", "unknown")
+            formality = context.get("formality_level", "unknown")
+            social_setting = context.get("social_setting", "unknown")
+            
+            # เก็บความสัมพันธ์
+            if "label" in result:
+                emotion = result["label"]
+                context_emotion_map[primary_context][emotion] += 1
+                context_emotion_map[f"formality_{formality}"][emotion] += 1
+                context_emotion_map[f"social_{social_setting}"][emotion] += 1
+            elif "labels" in result:
+                for emotion in result["labels"]:
+                    context_emotion_map[primary_context][emotion] += 1
+                    context_emotion_map[f"formality_{formality}"][emotion] += 1
+                    context_emotion_map[f"social_{social_setting}"][emotion] += 1
+    
+    # แปลงเป็น percentage
+    correlation_stats = {}
+    for context, emotions in context_emotion_map.items():
+        total = sum(emotions.values())
+        if total > 0:
+            correlation_stats[context] = {
+                emotion: round((count / total) * 100, 2) 
+                for emotion, count in emotions.items()
+            }
+    
+    return correlation_stats
+
+def get_context_recommendations(text: str, analyzer: DetailedThaiSentimentAnalyzer) -> Dict[str, Any]:
+    """ให้คำแนะนำการปรับปรุงการสื่อสารตามบริบท"""
+    result = analyzer.analyze_single_label(text)
+    context = result.get("context", {})
+    
+    recommendations = {
+        "current_analysis": result,
+        "suggestions": [],
+        "context_warnings": [],
+        "improvement_tips": []
+    }
+    
+    if isinstance(context, dict):
+        formality = context.get("formality_level", "neutral")
+        social_setting = context.get("social_setting", "general")
+        emotional_tone = context.get("emotional_tone", "neutral")
+        primary_context = context.get("primary_context", "neutral")
+        
+        # คำแนะนำตามความเป็นทางการ
+        if formality == "slang" and social_setting in ["business", "government", "education"]:
+            recommendations["context_warnings"].append(
+                "ใช้ภาษาสแลงในบริบททางการ อาจไม่เหมาะสม"
+            )
+            recommendations["suggestions"].append(
+                "แนะนำปรับเป็นภาษาที่เป็นทางการมากขึ้น"
+            )
+        
+        if formality == "formal" and social_setting == "social_media":
+            recommendations["suggestions"].append(
+                "อาจปรับเป็นภาษาที่เป็นกันเองมากขึ้นสำหรับโซเชียลมีเดีย"
+            )
+        
+        # คำแนะนำตามโทนอารมณ์
+        if emotional_tone == "complaint" and result["group"] == "Positive":
+            recommendations["context_warnings"].append(
+                "มีโทนการร้องเรียนแต่อารมณ์เป็นบวก - อาจเป็นการประชดหรือเสียดสี"
+            )
+        
+        if emotional_tone == "emergency" and result["confidence"] < 0.5:
+            recommendations["context_warnings"].append(
+                "สถานการณ์ฉุกเฉินแต่ความมั่นใจในการวิเคราะห์อารมณ์ต่ำ"
+            )
+        
+        # คำแนะนำปรับปรุง
+        if result["confidence"] < 0.3:
+            recommendations["improvement_tips"].append(
+                "ข้อความมีความคลุมเครือ แนะนำให้ระบุอารมณ์ให้ชัดเจนขึ้น"
+            )
+        
+        if len(context.get("all_contexts", {})) > 5:
+            recommendations["improvement_tips"].append(
+                "ข้อความมีบริบทผสมผสานมาก อาจแบ่งเป็นประโยคสั้นๆ ได้"
+            )
+    
+    return recommendations
+
+# === UTILITY FUNCTIONS FOR COMPREHENSIVE ANALYSIS ===
 
 def create_training_data_format(
     text: str, 
@@ -560,15 +783,20 @@ def demo_detailed_sentiment_analysis():
     # สร้าง analyzer
     analyzer = DetailedThaiSentimentAnalyzer()
     
-    # ข้อมูลทดสอบ
+    # ข้อมูลทดสอบที่หลากหลายบริบท
     test_texts = [
-        "โกรธจนขำอะชีวิต! ทำไมต้องมาแบบนี้ด้วย 555",
-        "ประชดหนักมากจนรู้สึกแย่ เป็นแบบนี้ทุกทีเลย",
-        "มันก็โอเค แต่ไม่สุด คาดหวังไว้มากกว่านี้",
-        "ดีใจมากเลย! รักมากๆ ขอบคุณนะคะ 😍❤️",
-        "ห่วยแตกแล้วจริงๆ โทรไปแจ้งก็ไม่แก้ไข ข้อมูลสำคัญนี้",
-        "งงมากเลย สับสนจริงๆ เข้าใจไม่ได้ 🤔",
-        "ข่าวสารอัปเดตประจำวัน สถานการณ์ปกติดี"
+        "โกรธจนขำอะชีวิต! ทำไมต้องมาแบบนี้ด้วย 555",  # informal + mixed emotion
+        "ประชดหนักมากจนรู้สึกแย่ เป็นแบบนี้ทุกทีเลย",  # complaint + sarcasm
+        "มันก็โอเค แต่ไม่สุด คาดหวังไว้มากกว่านี้",  # review + disappointment
+        "ดีใจมากเลย! รักมากๆ ขอบคุณนะคะ 😍❤️",  # informal + positive
+        "ขอแสดงความยินดีกับความสำเร็จครับ ขอให้ประสบผลสำเร็จต่อไป",  # formal + celebration
+        "รายงานข่าวประจำวัน สถานการณ์การจราจรปกติดี ไม่มีปัญหา",  # news + neutral
+        "อีคอมเมิร์ซนี้บริการดีมาก แนะนำเลยครับ ของถูกด้วย",  # review + business
+        "งงมากเลย สับสนจริงๆ เข้าใจไม่ได้ 🤔",  # informal + confusion
+        "ด่วน! เกิดเหตุไฟไหม้ ขอความช่วยเหลือด้วย",  # emergency + urgent
+        "555 ตลกดีจัง เฮฮามากเลย โคตรขำ",  # slang + humor
+        "ขอบพระคุณท่านครูมากค่ะ ขอให้มีสุขภาพแข็งแรง",  # formal + gratitude + education
+        "แอดมินครับ ระบบเล่นไม่ได้ แจ้งเจ้าหน้าที่หน่อยครับ"  # social_media + complaint + formal
     ]
     
     print("\n📍 Single Label Analysis (Multi-class Classification)")
@@ -582,7 +810,10 @@ def demo_detailed_sentiment_analysis():
         print(f"ข้อความ: {text}")
         print(f"อารมณ์: {result['label']} (กลุ่ม: {result['group']})")
         print(f"ความมั่นใจ: {result['confidence']}")
-        print(f"บริบท: {result['context']}")
+        print(f"บริบทหลัก: {result['context']['primary_context']}")
+        print(f"ระดับความเป็นทางการ: {result['context']['formality_level']}")
+        print(f"การตั้งค่าทางสังคม: {result['context']['social_setting']}")
+        print(f"โทนอารมณ์: {result['context']['emotional_tone']}")
         print(f"คะแนนอื่นๆ: {result['scores']}")
         print("-" * 30)
     
@@ -596,7 +827,10 @@ def demo_detailed_sentiment_analysis():
         
         print(f"ข้อความ: {text}")
         print(f"อารมณ์: {result['labels']} (กลุ่ม: {result['groups']})")
-        print(f"บริบท: {result['context']}")
+        print(f"บริบทหลัก: {result['context']['primary_context']}")
+        print(f"ระดับความเป็นทางการ: {result['context']['formality_level']}")
+        print(f"การตั้งค่าทางสังคม: {result['context']['social_setting']}")
+        print(f"โทนอารมณ์: {result['context']['emotional_tone']}")
         print(f"คะแนนทั้งหมด: {result['scores']}")
         print("-" * 30)
     
@@ -611,11 +845,17 @@ def demo_detailed_sentiment_analysis():
     print(f"  - อารมณ์ที่พบ: {single_stats['emotion_counts']}")
     print(f"  - กลุ่มอารมณ์: {single_stats['group_counts']}")
     print(f"  - ความมั่นใจเฉลี่ย: {single_stats['avg_confidence']}")
+    print(f"  - บริบทหลัก: {single_stats['context_stats']['primary_context_counts']}")
+    print(f"  - ระดับความเป็นทางการ: {single_stats['context_stats']['formality_level_counts']}")
+    print(f"  - Insights: {single_stats['context_insights']}")
     
     print("\nMulti Label:")
     print(f"  - อารมณ์ที่พบ: {multi_stats['emotion_counts']}")
     print(f"  - กลุ่มอารมณ์: {multi_stats['group_counts']}")
     print(f"  - ความมั่นใจเฉลี่ย: {multi_stats['avg_confidence']}")
+    print(f"  - บริบทหลัก: {multi_stats['context_stats']['primary_context_counts']}")
+    print(f"  - ระดับความเป็นทางการ: {multi_stats['context_stats']['formality_level_counts']}")
+    print(f"  - Insights: {multi_stats['context_insights']}")
     
     print("\n📝 ตัวอย่างการสร้างข้อมูล Training")
     print("-" * 50)
@@ -642,6 +882,73 @@ def demo_detailed_sentiment_analysis():
         print(f"ตัวอย่าง {i+1}:")
         print(json.dumps(example, ensure_ascii=False, indent=2))
         print()
+    
+    print("\n🔍 การวิเคราะห์ความสัมพันธ์บริบท-อารมณ์")
+    print("-" * 60)
+    
+    # รวมผลลัพธ์ทั้งหมด
+    all_results = single_results + multi_results
+    
+    # วิเคราะห์ความสัมพันธ์
+    correlation = analyze_context_emotion_correlation(all_results)
+    
+    print("ความสัมพันธ์ระหว่างบริบทและอารมณ์:")
+    for context, emotions in correlation.items():
+        print(f"\n{context}:")
+        for emotion, percentage in emotions.items():
+            print(f"  - {emotion}: {percentage}%")
+    
+    print("\n💡 คำแนะนำการปรับปรุงการสื่อสาร")
+    print("-" * 60)
+    
+    # แสดงคำแนะนำสำหรับข้อความตัวอย่าง
+    sample_texts = [
+        "โคตรห่วยแตกเลย บริการเซ็งมาก",  # สแลง + ร้องเรียน
+        "ขอบคุณครับ ได้รับข้อมูลแล้วครับ"  # ทางการ + สื่อสารงาน
+    ]
+    
+    for text in sample_texts:
+        recommendations = get_context_recommendations(text, analyzer)
+        
+        print(f"\nข้อความ: {text}")
+        print(f"บริบทหลัก: {recommendations['current_analysis']['context']['primary_context']}")
+        
+        if recommendations['context_warnings']:
+            print("⚠️ คำเตือน:")
+            for warning in recommendations['context_warnings']:
+                print(f"  - {warning}")
+        
+        if recommendations['suggestions']:
+            print("📝 คำแนะนำ:")
+            for suggestion in recommendations['suggestions']:
+                print(f"  - {suggestion}")
+        
+        if recommendations['improvement_tips']:
+            print("💡 เทิปปรับปรุง:")
+            for tip in recommendations['improvement_tips']:
+                print(f"  - {tip}")
+
+    print("\n🎯 สรุปความสามารถของระบบบริบทที่ครอบคลุม")
+    print("-" * 60)
+    print("✅ วิเคราะห์บริบท 15+ ประเภท:")
+    print("  - ระดับความเป็นทางการ (formal, informal, slang)")
+    print("  - ความสัมพันธ์ส่วนตัว (personal, intimate, friendly)")
+    print("  - บริบทสื่อสังคม (social_media, news_media, review)")
+    print("  - บริบทอารมณ์ (complaint, praise, question)")
+    print("  - บริบทสถานการณ์ (emergency, celebration, condolence)")
+    print("  - บริบทวัฒนธรรม (religious, traditional, modern)")
+    print("  - บริบทภูมิศาสตร์ (central, northern, southern, northeastern)")
+    print("  - บริบทอายุ/รุ่น (gen_z, millennial, gen_x)")
+    print("  - บริบทวิชาชีพ (business, education, healthcare, government)")
+    print("\n✅ ให้คำแนะนำการปรับปรุงการสื่อสาร")
+    print("✅ วิเคราะห์ความสัมพันธ์ระหว่างบริบทและอารมณ์")
+    print("✅ รองรับการวิเคราะห์แบบ single-label และ multi-label")
+    print("✅ ระบุความมั่นใจและให้ข้อมูลบริบทเชิงลึก")
+    print("✅ รองรับการสร้างข้อมูล training ในรูปแบบต่างๆ")
+    print("✅ ประมวลผลแบบ batch สำหรับการวิเคราะห์จำนวนมาก")
+    print("✅ สถิติและการวิเคราะห์เชิงลึกสำหรับผลลัพธ์การวิเคราะห์")
+    print("✅ ฟังก์ชันการสาธิตการใช้งานระบบอย่างครอบคลุม")
+
 
 if __name__ == "__main__":
     demo_detailed_sentiment_analysis()
