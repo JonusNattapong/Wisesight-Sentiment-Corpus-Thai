@@ -380,6 +380,11 @@ def flatten_comments(comments, video_id, parent_id=None, privacy_mode='none', se
         if privacy_mode in ('mask', 'remove'):
             text = clean_text_privacy(text)
         
+        # One-hot encoding for pos/neu/neg/other
+        pos = 1 if sentiment_basic == 'positive' else 0
+        neu = 1 if sentiment_basic == 'neutral' else 0
+        neg = 1 if sentiment_basic == 'negative' else 0
+        other = 1 if sentiment_basic not in ('positive', 'neutral', 'negative') else 0
         # Base row structure
         row = {
             'video_id': video_id,
@@ -394,6 +399,10 @@ def flatten_comments(comments, video_id, parent_id=None, privacy_mode='none', se
             'sentiment': sentiment_basic,
             'confidence': confidence,
             'sentiment_score': sentiment_score,
+            'pos': pos,
+            'neu': neu,
+            'neg': neg,
+            'other': other,
             'model_type': sentiment_result.get('model_type', 'unknown'),
             'privacy_notice': 'This dataset is for research only. Do not use for commercial or personal identification.'
         }
@@ -945,6 +954,7 @@ def flatten_comments_no_sentiment(comments, video_id, parent_id=None, privacy_mo
         if privacy_mode in ('mask', 'remove'):
             text = clean_text_privacy(text)
         
+        # Default: all 0, only neu=1 (since no sentiment analysis)
         row = {
             'video_id': video_id,
             'comment_id': c.get('id'),
@@ -954,6 +964,9 @@ def flatten_comments_no_sentiment(comments, video_id, parent_id=None, privacy_mo
             'like_count': c.get('like_count'),
             'published': c.get('published'),
             'is_reply': parent_id is not None,
+            'pos': 0,
+            'neu': 1,
+            'neg': 0,
             'privacy_notice': 'This dataset is for research only. Do not use for commercial or personal identification.'
         }
         rows.append(row)
