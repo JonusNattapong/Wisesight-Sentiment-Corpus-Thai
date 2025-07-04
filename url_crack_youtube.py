@@ -1,3 +1,14 @@
+# manual mapping: ช่องที่ API/HTML หา channelId ไม่ได้
+manual_channel_ids = {
+    'one31': 'UC8pPz5w69fQvM2U6pP2zjXg',
+    'workpoint': 'UC7dF9qfBMXrSlaaFFDvV_Yg',
+    'thairath': 'UC6n8I1i5pGSKcHzH3O5l5QA',
+    'ch3thailand': 'UCQWQWEdK1qFqKkHcE-1r5Aw',
+    'ch7hd': 'UCQIM1u6b6t1tQpTg4pG8rYw',
+    'amarintv': 'UCwssGZKXJQp6pFhQb6h6Q2A',
+    'thaipbs': 'UCQvYXeZbQ5b0rxcdbpL6d8g',
+    # เพิ่มช่องอื่น ๆ ตามต้องการ
+}
 import subprocess
 import sys
 import requests
@@ -29,13 +40,33 @@ channels = {
     'ch7hd': 'https://www.youtube.com/@ch7hd',
     'amarintv': 'https://www.youtube.com/@AMARINTVHD',
     'thaipbs': 'https://www.youtube.com/@ThaiPBS',
-    'mcot': 'https://www.youtube.com/@TNAMCOT',
+    '9MCOT': 'https://www.youtube.com/@9MCOT',
     'nationtv22': 'https://www.youtube.com/@nationtvTH',
     'pptv36': 'https://www.youtube.com/@PPTVHD36',
     'springnews': 'https://www.youtube.com/@springnewsonline',
     'tnn16': 'https://www.youtube.com/@TNN.Online',
     'voicetv': 'https://www.youtube.com/@voicetv',
-    
+    'ch7hdnews': 'https://www.youtube.com/@ch7hdnews',
+    '3PlusNews': 'https://www.youtube.com/@3PlusNews',
+    'onenews31': 'https://www.youtube.com/@onenews31',
+    'Luichonkhao': 'https://www.youtube.com/@Luichonkhao',
+    'thaich8news': 'https://www.youtube.com/@thaich8news',
+    'maleevsking': 'https://www.youtube.com/@maleevsking',
+    'GUZAP': 'https://www.youtube.com/@GUZAP',
+    'mheeMovie': 'https://www.youtube.com/@mheeMovie',
+    'MajorGroup': 'https://www.youtube.com/@MajorGroup',
+    'Longtunman': 'https://www.youtube.com/@Longtunman',
+    'NetflixThailand': 'https://www.youtube.com/@NetflixThailand',
+    'LUPAS_': 'https://www.youtube.com/@LUPAS_',
+    'tobenumberonechannel': 'https://www.youtube.com/@tobenumberonechannel',
+    'techoffside': 'https://www.youtube.com/@techoffside',
+    'TheStandardNews': 'https://www.youtube.com/@TheStandardNews',
+    'TheStandardWealth': 'https://www.youtube.com/@TheStandardWealth',
+    '1 MILL': 'https://www.youtube.com/channel/UC9XnG68APlP7HaI6y5NU9TQ',
+    'SharkTankThailandOfficial': 'https://www.youtube.com/@SharkTankThailandOfficial',
+    'WoodyWorldChannel': 'https://www.youtube.com/@WoodyWorldChannel',
+    'terodigital': 'https://www.youtube.com/terodigital',  # ช่องเทโรดิจิทัล
+
     # บันเทิงและเพลงที่มีชื่อเสียงจริง
     'gmmtv': 'https://www.youtube.com/@gmmtv',
     'gmmgrammy': 'https://www.youtube.com/@GMMGrammy',
@@ -62,7 +93,7 @@ channels = {
     'khaosod': 'https://www.youtube.com/@KhaosodTV',
     'matichon': 'https://www.youtube.com/@matichontv',
     'sanook': 'https://www.youtube.com/@sanook',
-
+    'RedremasteRed': 'https://www.youtube.com/@RedremasteRed',
     'bodyslam': 'https://www.youtube.com/@bodyslambandtv',
     'carabao': 'https://www.youtube.com/@carabaoofficial',
     'bird': 'https://www.youtube.com/@birdthongchaichannel',
@@ -87,6 +118,17 @@ channels = {
     'taibaan': 'https://www.youtube.com/@TaiBaanOfficial',
     'serngmusic': 'https://www.youtube.com/@serngmusicofficial',
     'sianstudio': 'https://www.youtube.com/@Sianstudio',
+    'spin9arm': 'https://www.youtube.com/@spin9arm',
+    'FastDrama': 'https://www.youtube.com/@FastDrama',
+    'honekrasaeofficial': 'https://www.youtube.com/@honekrasaeofficial',
+    'TheVoiceThailand': 'https://www.youtube.com/@TheVoiceThailand',
+    'nuenglc': 'https://www.youtube.com/@nuenglc',
+    'nickynachat': 'https://www.youtube.com/@nickynachat',
+    'ohanaclip': 'https://www.youtube.com/@ohanaclip',
+    'theWatcher_Documentary': 'https://www.youtube.com/@theWatcher_Documentary',
+    'MissionToTheMoonMedia': 'https://www.youtube.com/@MissionToTheMoon',
+    'GMM25Thailand': 'https://www.youtube.com/@GMM25Thailand',
+    
 }
 
 def get_youtube_videos_from_channel(channel_url, max_videos=35):  # ลดจาก 35 เป็น 25 เพื่อความเสถียร
@@ -126,108 +168,94 @@ def get_youtube_videos_from_channel(channel_url, max_videos=35):  # ลดจา
         print(f"  ✗ เกิดข้อผิดพลาด: {e}")
         return []
 
-def get_manual_youtube_urls():
-    """
-    กรณีที่ scraping ไม่ได้ผล ใช้ลิงก์ตัวอย่างแทน
-    ใช้ลิงก์วิดีโอจริงที่มีอยู่บน YouTube เฉพาะช่องไทยจริงเท่านั้น
-    """
-    # วิดีโอไทยที่มีความนิยมและมีคอมเมนต์เยอะ (ตรวจสอบแล้วว่าเป็นของช่องไทยจริง)
-    popular_thai_videos = [
-        # เพลงไทยยอดนิยม
-        "https://www.youtube.com/watch?v=WrxnqJcEcGA",  # BodySlam
-        "https://www.youtube.com/watch?v=NPiy4SIESnY",  # BNK48
-        "https://www.youtube.com/watch?v=B7IUTYu__xU",  # Palmy
-        "https://www.youtube.com/watch?v=9bKRfesZF3g",  # Bird Thongchai
-        "https://www.youtube.com/watch?v=YgLXP0xbrC8",  # Carabao
-        "https://www.youtube.com/watch?v=4WikwMrHvtE",  # Big Ass
-        "https://www.youtube.com/watch?v=bzHjPbtIwrg",  # Lomosonic
-        "https://www.youtube.com/watch?v=mE81Rjrs1B0",  # Paradox
-        
-        # ข่าวและประเด็นร้อน
-        "https://www.youtube.com/watch?v=XCg44xXfqr4",  # ThaiPBS
-        "https://www.youtube.com/watch?v=MxgaJ88v-N8",  # Thairath
-        "https://www.youtube.com/watch?v=7Q8hAb230OE",  # WorkPoint
-        "https://www.youtube.com/watch?v=K9s5oNbEQvU",  # ONE31
-        
-        # บันเทิง/รายการ
-        "https://www.youtube.com/watch?v=dC8DMLkkwNg",  # GMMTV
-        "https://www.youtube.com/watch?v=cCZ2R6UmzTA",  # GMM Grammy
-        "https://www.youtube.com/watch?v=FV5wL8rJ4Gw",  # Ch3
-        "https://www.youtube.com/watch?v=9Z6UBHdqGF0",  # Ch7
-        
-        # YouTuber ไทย
-        "https://www.youtube.com/watch?v=Sv6dMFF_yts",  # Kaykai
-        "https://www.youtube.com/watch?v=7lCDEYXw3mM",  # Peach Eat
-        "https://www.youtube.com/watch?v=mH0_XpSHkZo",  # Time Thai
-        "https://www.youtube.com/watch?v=L_jWHffIx5E",  # Bie
-        
-        # เกม/เทคโนโลยี
-        "https://www.youtube.com/watch?v=ZZ5LpwO-An4",  # TechOffside
-        "https://www.youtube.com/watch?v=ZbZSe6N_BXs",  # DroidSans
-        "https://www.youtube.com/watch?v=fC7oUOUEEi4",  # iPhone Mod
-        "https://www.youtube.com/watch?v=hFcLyDb6niA",  # Unbox Thailand
-        
-        # อาหาร/ท่องเที่ยว
-        "https://www.youtube.com/watch?v=0mHUwEprSJ8",  # Mark Wiens
-        "https://www.youtube.com/watch?v=jNQXAC9IVRw",  # Wongnai
-        "https://www.youtube.com/watch?v=CevxZvSJLk8",  # Amazing Thailand
-        "https://www.youtube.com/watch?v=rjQtzV9IZ0Q",  # Travel Thailand
-    ]
-    
-    return popular_thai_videos
 
-def get_youtube_videos_from_api(channel_id_or_username, api_key, max_results=50):
+def get_youtube_videos_from_api(channel_id_or_username, api_key=None, max_results=20, channel_key=None):
     """
-    ดึงลิงก์วิดีโอล่าสุดจากช่อง YouTube จริง ด้วย YouTube Data API v3
-    channel_id_or_username: สามารถใส่ channel id (UC...), @username หรือ url (https://www.youtube.com/@username) ได้
-    api_key: YouTube Data API v3 key
+    ดึงลิงก์วิดีโอล่าสุดจากช่อง YouTube ด้วย web scraping เท่านั้น (ไม่ใช้ API)
+    channel_id_or_username: channel id (UC...), @username, หรือ url (https://www.youtube.com/@username)
     return: list ของลิงก์วิดีโอ (url)
     """
-    import requests
     import re
-    video_urls = []
-    try:
-        # รองรับ url รูปแบบ https://www.youtube.com/@username หรือ https://youtube.com/@username
-        if channel_id_or_username.startswith('http'):
+    # แปลง input เป็น channel id หรือ url
+    channel_id = None
+    channel_url = None
+    # ถ้าเป็น url
+    if isinstance(channel_id_or_username, str) and channel_id_or_username.startswith('http'):
+        m = re.search(r'youtube\.com/(?:channel/)?(UC[\w-]+)', channel_id_or_username)
+        if m:
+            channel_id = m.group(1)
+        else:
+            # เป็น @handle หรือ /user/xxx
             m = re.search(r'youtube\.com/@([\w\.-]+)', channel_id_or_username)
             if m:
-                channel_id_or_username = f"@{m.group(1)}"
-            else:
-                print(f"[API] ไม่รู้จักรูปแบบ channel: {channel_id_or_username}")
-                return []
-        # ถ้าเป็น @username ต้องแปลงเป็น channelId ก่อน
-        if channel_id_or_username.startswith('@'):
-            url = f"https://www.googleapis.com/youtube/v3/channels?part=id&forUsername={channel_id_or_username[1:]}&key={api_key}"
-            resp = requests.get(url)
-            data = resp.json()
-            if 'items' in data and data['items']:
-                channel_id = data['items'][0]['id']
-            else:
-                print(f"[API] ไม่พบ channel id สำหรับ {channel_id_or_username}")
-                return []
-        elif channel_id_or_username.startswith('UC'):
-            channel_id = channel_id_or_username
-        else:
-            # ลอง extract channel id จาก url
-            m = re.search(r"youtube.com/(?:channel/)?(UC[\w-]+)", channel_id_or_username)
-            if m:
-                channel_id = m.group(1)
-            else:
-                print(f"[API] ไม่รู้จักรูปแบบ channel: {channel_id_or_username}")
-                return []
-        # ดึงวิดีโอ
-        url = f"https://www.googleapis.com/youtube/v3/search?key={api_key}&channelId={channel_id}&part=snippet,id&order=date&maxResults={max_results}"
-        resp = requests.get(url)
-        data = resp.json()
-        for item in data.get('items', []):
-            if item['id']['kind'] == 'youtube#video':
-                video_id = item['id']['videoId']
-                video_urls.append(f"https://www.youtube.com/watch?v={video_id}")
-        print(f"[API] พบวิดีโอ {len(video_urls)} รายการจาก {channel_id_or_username}")
-        return video_urls
-    except Exception as e:
-        print(f"[API] เกิดข้อผิดพลาด: {e}")
+                handle = m.group(1)
+                channel_url = f"https://www.youtube.com/@{handle}"
+    elif isinstance(channel_id_or_username, str) and channel_id_or_username.startswith('UC'):
+        channel_id = channel_id_or_username
+    elif isinstance(channel_id_or_username, str) and channel_id_or_username.startswith('@'):
+        handle = channel_id_or_username[1:]
+        channel_url = f"https://www.youtube.com/@{handle}"
+    else:
+        # ไม่รู้จักรูปแบบ
+        print(f"[SCRAPER] ไม่รู้จักรูปแบบ channel: {channel_id_or_username}")
         return []
+    if channel_id:
+        channel_url = f"https://www.youtube.com/channel/{channel_id}"
+    if not channel_url:
+        print(f"[SCRAPER] ไม่พบ url สำหรับ {channel_id_or_username}")
+        return []
+    return get_youtube_videos_from_channel(channel_url, max_videos=max_results)
+
+def get_comment_count(video_url):
+    """ดึงจำนวนคอมเมนต์จากหน้า YouTube video (scrape)"""
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+        resp = requests.get(video_url, headers=headers, timeout=15)
+        resp.raise_for_status()
+        html = resp.text
+        # หา initialData JSON
+        m = re.search(r'var ytInitialData = (\{.*?\});', html, re.DOTALL)
+        if not m:
+            m = re.search(r'window\["ytInitialData"\] = (\{.*?\});', html, re.DOTALL)
+        if m:
+            import json
+            try:
+                data = json.loads(m.group(1))
+                # หา commentCount ใน JSON
+                # อาจอยู่ใน videoPrimaryInfoRenderer หรือ elsewhere
+                count = None
+                # วิธี 1: หาใน videoPrimaryInfoRenderer
+                try:
+                    count = data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][0]['videoPrimaryInfoRenderer']['videoActions']['menuRenderer']['topLevelButtons'][2]['toggleButtonRenderer']['defaultText']['simpleText']
+                except Exception:
+                    pass
+                # วิธี 2: หาใน microformat
+                if not count:
+                    try:
+                        count = data['microformat']['playerMicroformatRenderer']['commentCount']
+                    except Exception:
+                        pass
+                # วิธี 3: หาใน "commentCount" regex
+                if not count:
+                    m2 = re.search(r'"commentCount":\s*"?(\d+)"?', html)
+                    if m2:
+                        count = m2.group(1)
+                if count:
+                    # แปลงเป็น int
+                    count = int(count.replace(',', '').replace('ความคิดเห็น', '').strip())
+                    return count
+            except Exception:
+                pass
+        # fallback: หา "ความคิดเห็น" ใน HTML
+        m = re.search(r'(\d+[\,\d]*)\s*ความคิดเห็น', html)
+        if m:
+            count = int(m.group(1).replace(',', ''))
+            return count
+    except Exception as e:
+        print(f"[SCRAPER] Error fetching comment count for {video_url}: {e}")
+    return 0
 
 print("=" * 60)
 print("🎥 YouTube URL Collector สำหรับช่องไทย (ปรับปรุงแล้ว)")
@@ -249,49 +277,52 @@ if not api_key or api_key == "your_api_key_here":
     print("[API] ไม่พบ YOUTUBE_API_KEY ใน .env หรือยังไม่ได้ตั้งค่า กรุณาเพิ่มคีย์ก่อนใช้งาน!")
     exit(1)
 
-# พยายามดึงจากช่องต่างๆ ด้วย API
+# Update the main video-fetching loop to use scraping only, no channelId resolving
+num_per_channel = 20  # จำนวนลิงก์ล่าสุดต่อช่อง (ปรับได้)
+per_channel_links = {}
+all_links = []
+successful_channels = 0
+total_channels = len(channels)
 for i, (channel_name, channel_url) in enumerate(channels.items(), 1):
-    print(f"\n📺 กำลังดึงจากช่อง: {channel_name} ({i}/{total_channels})")
-    # ใช้ API สำหรับทุกช่อง (channelId หรือ @username หรือ url)
-    videos = get_youtube_videos_from_api(channel_url, api_key, max_results=50)
-    if not videos:
-        print(f"  ↪️ [Fallback] ลองใช้ scraper สำหรับ {channel_name}")
-        videos = get_youtube_videos_from_channel(channel_url, max_videos=50)
-    if videos:
-        all_links.extend(videos)
+    print(f"\n📺 Fetching videos for: {channel_name} ({i}/{total_channels})")
+    videos = get_youtube_videos_from_api(channel_url, max_results=40, channel_key=channel_name)  # ดึงเยอะขึ้นเพื่อคัด top
+    video_comment_pairs = []
+    for v in videos:
+        count = get_comment_count(v)
+        print(f"    {v}  |  ความคิดเห็น: {count}")
+        video_comment_pairs.append((v, count))
+        time.sleep(0.2)
+    # sort by comment count desc, pick top N
+    video_comment_pairs.sort(key=lambda x: x[1], reverse=True)
+    top_videos = [v for v, c in video_comment_pairs[:num_per_channel]]
+    if top_videos:
+        per_channel_links[channel_name] = top_videos
+        all_links.extend(top_videos)
         successful_channels += 1
     else:
-        print(f"  ✗ [API/Scraper] ไม่พบวิดีโอหรือเกิดข้อผิดพลาดสำหรับ {channel_name}")
-    time.sleep(0.5)
-    if i % 10 == 0:
-        print(f"\n📊 สถานะ: ดึงแล้ว {i}/{total_channels} ช่อง, สำเร็จ {successful_channels} ช่อง, ได้ลิงก์ {len(all_links)} รายการ")
+        print(f"  ✗ [SCRAPER] No videos found or error for {channel_name}")
+    if i % 5 == 0:
+        print(f"\n📊 Status: Processed {i}/{total_channels} channels, successful {successful_channels}, links {len(all_links)}")
 
-print(f"\n📊 สรุป: ดึงสำเร็จ {successful_channels}/{total_channels} ช่อง")
-print(f"📊 รวมลิงก์จาก API: {len(all_links)} รายการ")
+# รวมลิงก์ล่าสุดจากแต่ละช่อง
+latest_links = []
+for channel_name in per_channel_links:
+    latest_links.extend(per_channel_links[channel_name])
 
-# ถ้าดึงได้น้อยเกินไป ไม่ต้องเติม manual links อีกต่อไป
-
-# จำกัดที่ 1800 รายการและกำจัดซ้ำ
-all_links = list(set(all_links))[:1800]
-final_links = all_links[:1500]
-
-output_file = "youtube_real_links_batch.txt"
+output_file = f"youtube_latest_links_{num_per_channel}per_channel.txt"
 with open(output_file, "w", encoding="utf-8") as f:
-    for link in final_links:
+    for link in latest_links:
         f.write(link + "\n")
 
-print(f"\n✅ ดึงลิงก์วิดีโอทั้งหมด {len(final_links)} รายการ เรียบร้อยแล้ว")
+print(f"\n✅ ดึงลิงก์ล่าสุด {num_per_channel} ลิงก์ต่อช่อง รวม {len(latest_links)} รายการ เรียบร้อยแล้ว")
 print(f"📁 บันทึกไฟล์: {output_file}")
-print(f"📊 จากช่องจริง: {min(len(all_links), 1500)} รายการ")
-
 print("\n🔍 ตัวอย่างลิงก์ที่ได้:")
-for i, link in enumerate(final_links[:5], 1):
+for i, link in enumerate(latest_links[:5], 1):
     print(f"   {i}. {link}")
-if len(final_links) > 5:
-    print(f"   ... และอีก {len(final_links) - 5} รายการ")
+if len(latest_links) > 5:
+    print(f"   ... และอีก {len(latest_links) - 5} รายการ")
 
 print(f"\n💡 สามารถใช้ไฟล์นี้กับ get_comments.py โดยใช้ --from_file {output_file}")
-print("💡 หรือใช้กับ CLI: python get_comments.py --from_file youtube_real_links_1500.txt --advanced_sentiment --export_format jsonl")
 
 if __name__ == "__main__":
     # ทดสอบ YouTube Data API v3

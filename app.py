@@ -57,7 +57,22 @@ EMOTION_PATTERNS = {
     # === POSITIVE EMOTIONS ===
     "ดีใจ": {
         "keywords": ["ดีใจ", "มีความสุข", "แฮปปี้", "ปลื้ม", "ยินดี", "เฮง", "เย้", "โย่", "เจ๋ง", "ดี่ใจ"],
-        "patterns": [r"ดี\s*ใจ", r"ปลื้ม", r"เฮง\s*ซะ", r"แฮปปี้", r"เย้.*", r"โย่.*"],
+        "patterns": [
+            r"ดี\s*ใจ",
+            r"ปลื้ม",
+            r"เฮง\s*ซะ",
+            r"แฮปปี้",
+            r"เย้.*",
+            r"โย่.*",
+            # เพิ่ม pattern รองรับประโยคยาว/ซับซ้อน/คำขยาย
+            r"ดีใจ(มาก|สุด|จริง|เหลือเกิน|จนร้องไห้)?",
+            r"รู้สึกดีใจ[^.!?]*",
+            r"มันทำให้ดีใจ[^.!?]*",
+            r"ดีใจที่[^.!?]*",
+            r"ดีใจจน(ร้องไห้|น้ำตาไหล)",
+            r"ดีใจ[^.!?]*(แต่|แต่ก็)[^.!?]*(เสียใจ|โกรธ|เกลียด)",
+            r"แม้จะ(เสียใจ|ผิดหวัง)[^.!?]*(แต่|แต่ก็)[^.!?]*ดีใจ"
+        ],
         "emojis": ["😊", "😄", "🤗", "😍", "🥰", "😘", "😆", "🤩"],
         "score_range": (0.6, 1.0)
     },
@@ -100,7 +115,21 @@ EMOTION_PATTERNS = {
     
     "เสียใจ": {
         "keywords": ["เสียใจ", "เศร้า", "ใจหาย", "ปวดใจ", "เศร้าโศก", "โศกเศร้า", "เสียดาย", "น่าเสียใจ"],
-        "patterns": [r"เสียใจ", r"เศร้า.*มาก", r"ใจหาย", r"ปวดใจ", r"เศร้าโศก"],
+        "patterns": [
+            r"เสียใจ",
+            r"เศร้า.*มาก",
+            r"ใจหาย",
+            r"ปวดใจ",
+            r"เศร้าโศก",
+            # เพิ่ม pattern รองรับประโยคยาว/ซับซ้อน/คำขยาย
+            r"เสียใจ(มาก|สุด|จริง|เหลือเกิน|จนพูดไม่ออก)?",
+            r"รู้สึกเสียใจ[^.!?]*",
+            r"มันทำให้เสียใจ[^.!?]*",
+            r"เสียใจที่[^.!?]*",
+            r"เสียใจจน(ร้องไห้|น้ำตาไหล)",
+            r"เสียใจ[^.!?]*(แต่|แต่ก็)[^.!?]*(ดีใจ|ภูมิใจ)",
+            r"แม้จะ(ดีใจ|ภูมิใจ)[^.!?]*(แต่|แต่ก็)[^.!?]*เสียใจ"
+        ],
         "emojis": ["😢", "😭", "😞", "☹️", "😔", "💔"],
         "score_range": (-0.8, -0.4)
     },
@@ -196,6 +225,18 @@ EMOTION_PATTERNS = {
         "patterns": [r"สับสน", r"งง.*", r"เข้าใจไม่ได้", r"แปลก.*", r"ฉงน.*"],
         "emojis": ["😕", "🤔", "😵‍💫", "🫤", "😵"],
         "score_range": (-0.2, 0.2)
+    },
+    
+    # === QUESTION PATTERNS ===
+    "question": {
+        "keywords": ["?", "สงสัย", "ถาม", "ขอข้อมูล", "ขอรายละเอียด", "ขอความเห็น", "ขอคำแนะนำ", "ขอคำตอบ", "ขอความช่วยเหลือ"],
+        "patterns": [
+            r'\?$',
+            r'^(ใคร|อะไร|ที่ไหน|เมื่อไร|ทำไม|อย่างไร|เท่าไร|กี่|หรือ|ใช่ไหม|ไหม|หรือเปล่า|รึเปล่า|รึ|ปะ|ป่าว|ป่ะ|มะ|มั้ย|มั๊ย|มั้ยล่ะ|รึเปล่าครับ|รึเปล่าคะ|รึเปล่าค่ะ|รึเปล่าครับ)$',
+            r'^(ขอถาม|ขอทราบ|สงสัย|ถามหน่อย|ขอข้อมูล|ขอรายละเอียด|ขอความเห็น|ขอคำแนะนำ|ขอคำตอบ|ขอความช่วยเหลือ)',
+        ],
+        "emojis": ["❓", "🤔", "⁉️", "🤨"],
+        "score_range": (0.1, 0.3)
     }
 }
 
@@ -327,22 +368,18 @@ def flatten_comments(comments, video_id, parent_id=None, privacy_mode='none', se
     rows = []
     for c in comments:
         comment_text = c.get('text', '')
-        
+
         # Sentiment analysis based on mode
         if sentiment_mode == 'detailed' and DETAILED_SENTIMENT_AVAILABLE:
-            # ใช้ระบบ ML (detailed sentiment analysis)
             sentiment_result = analyze_detailed_sentiment(
-                comment_text, 
-                mode=detailed_mode,  # 'single' หรือ 'multi'
+                comment_text,
+                mode=detailed_mode,
                 threshold=0.3,
                 include_scores=True
             )
-            # แปลงเป็น format ที่เข้ากับ schema เดิม
             sentiment_basic = sentiment_result.get('sentiment', 'neutral')
-            # confidence: ถ้า ML คืน confidence ให้ใช้, ถ้าไม่มีให้ใช้ max score ของ detailed_emotions
             confidence = sentiment_result.get('confidence')
             if confidence is None:
-                # ลองหา max score จาก all_scores ของ detailed_emotions
                 all_scores = sentiment_result.get('all_scores', {})
                 detailed_emotions = sentiment_result.get('detailed_emotions', [])
                 if detailed_emotions and all_scores:
@@ -351,25 +388,21 @@ def flatten_comments(comments, video_id, parent_id=None, privacy_mode='none', se
                 else:
                     confidence = 0.0
             sentiment_score = _sentiment_to_score(sentiment_basic)
-
         elif sentiment_mode == 'enhanced' and DETAILED_SENTIMENT_AVAILABLE:
-            # ใช้ enhanced analysis (backward compatible)
             sentiment_result = enhanced_analyze_sentiment(comment_text)
             sentiment_basic = sentiment_result.get('sentiment', 'neutral')
             confidence = sentiment_result.get('confidence', 0.0)
             sentiment_score = sentiment_result.get('sentiment_score', 0.0)
-
         else:
-            # ใช้ระบบ built-in (pattern matching) เมื่อไม่มี external modules
             sentiment_result = analyze_sentiment_builtin(
-                comment_text, 
+                comment_text,
                 mode=detailed_mode if sentiment_mode == 'detailed' else 'single',
                 threshold=0.3
             )
             sentiment_basic = sentiment_result.get('sentiment', 'neutral')
             confidence = sentiment_result.get('confidence', 0.0)
             sentiment_score = sentiment_result.get('sentiment_score', 0.0)
-        
+
         # Privacy handling
         author = c.get('author')
         if privacy_mode == 'mask':
@@ -379,82 +412,82 @@ def flatten_comments(comments, video_id, parent_id=None, privacy_mode='none', se
         text = c.get('text')
         if privacy_mode in ('mask', 'remove'):
             text = clean_text_privacy(text)
-        
-        # One-hot encoding for pos/neu/neg/other
-        pos = 1 if sentiment_basic == 'positive' else 0
-        neu = 1 if sentiment_basic == 'neutral' else 0
-        neg = 1 if sentiment_basic == 'negative' else 0
-        other = 1 if sentiment_basic not in ('positive', 'neutral', 'negative') else 0
-        # Base row structure
-        row = {
-            'video_id': video_id,
-            'comment_id': c.get('id'),
-            'parent_id': parent_id,
-            'author': author,
-            'text': text,
-            'like_count': c.get('like_count'),
-            'published': c.get('published'),
-            'is_reply': parent_id is not None,
-            # --- มาตรฐาน sentiment schema ---
-            'sentiment': sentiment_basic,
-            'confidence': confidence,
-            'sentiment_score': sentiment_score,
-            'pos': pos,
-            'neu': neu,
-            'neg': neg,
-            'other': other,
-            'model_type': sentiment_result.get('model_type', 'unknown'),
-            'privacy_notice': 'This dataset is for research only. Do not use for commercial or personal identification.'
-        }
-        
-        # เพิ่มข้อมูล detailed sentiment ถ้าเปิดใช้งาน
+
+        # Multi-label/multi-emotion: split into multiple rows per detailed_emotion
+        # Only applies for detailed sentiment mode with multi-emotion support
         if sentiment_mode == 'detailed':
-            if DETAILED_SENTIMENT_AVAILABLE:
-                # ใช้ข้อมูลจาก external detailed sentiment module
-                row.update({
-                    'detailed_sentiment_analysis': sentiment_result,
-                    'analysis_mode': detailed_mode,
-                    'detailed_emotions': sentiment_result.get('detailed_emotions', []) if detailed_mode == 'multi' else [sentiment_result.get('detailed_emotion', '')],
-                    'emotion_groups': sentiment_result.get('emotion_groups', []) if detailed_mode == 'multi' else [sentiment_result.get('emotion_group', '')],
-                    'context': sentiment_result.get('context', 'unknown')
-                })
-            else:
-                # ใช้ built-in patterns
-                if detailed_mode == 'multi':
-                    row.update({
-                        'detailed_sentiment_analysis': sentiment_result,
-                        'analysis_mode': detailed_mode,
-                        'detailed_emotions': sentiment_result.get('detailed_emotions', []),
-                        'emotion_groups': sentiment_result.get('emotion_groups', []),
-                        'context': sentiment_result.get('context', 'unknown')
-                    })
+            if detailed_mode == 'multi':
+                detailed_emotions = []
+                if DETAILED_SENTIMENT_AVAILABLE:
+                    detailed_emotions = sentiment_result.get('detailed_emotions', [])
                 else:
-                    row.update({
-                        'detailed_sentiment_analysis': sentiment_result,
-                        'analysis_mode': detailed_mode,
-                        'detailed_emotions': [sentiment_result.get('detailed_emotion', '')],
-                        'emotion_groups': [sentiment_result.get('emotion_group', '')],
-                        'context': sentiment_result.get('context', 'unknown')
-                    })
-        
-        elif sentiment_mode == 'enhanced':
-            if DETAILED_SENTIMENT_AVAILABLE:
-                # ใช้ข้อมูลจาก external enhanced module
-                row.update({
-                    'detailed_emotion': sentiment_result.get('detailed_emotion', ''),
-                    'emotion_group': sentiment_result.get('emotion_group', ''),
-                    'context': sentiment_result.get('context', 'unknown')
-                })
+                    detailed_emotions = sentiment_result.get('detailed_emotions', [])
+                if not detailed_emotions:
+                    detailed_emotions = ['other']
+                label_names = ['neutral', 'positive', 'negative', 'question']
+                # ป้องกันแถวซ้ำ: ใช้ set() เฉพาะเมื่อ detailed_emotions มีแต่ label ที่ซ้ำกันจริง ๆ
+                seen_sentiments = set()
+                for emotion in detailed_emotions:
+                    group = LABEL_TO_GROUP.get(emotion, None)
+                    if group == 'Positive':
+                        sentiment = 'positive'
+                    elif group == 'Negative':
+                        sentiment = 'negative'
+                    elif group == 'Neutral':
+                        sentiment = 'neutral'
+                    elif group == 'Others':
+                        sentiment = 'other'
+                    else:
+                        sentiment = 'other'
+                    if sentiment not in label_names:
+                        sentiment = 'other'
+                    if (text, sentiment) in seen_sentiments:
+                        continue
+                    seen_sentiments.add((text, sentiment))
+                    row = {
+                        'text': text,
+                        'sentiment': sentiment
+                    }
+                    rows.append(row)
             else:
-                # ใช้ built-in patterns สำหรับ enhanced mode
-                row.update({
-                    'detailed_emotion': sentiment_result.get('detailed_emotion', ''),
-                    'emotion_group': sentiment_result.get('emotion_group', ''),
-                    'context': sentiment_result.get('context', 'unknown')
-                })
-        
-        rows.append(row)
-        
+                # single mode: one row per comment
+                emotion = ''
+                group = ''
+                if DETAILED_SENTIMENT_AVAILABLE:
+                    emotion = sentiment_result.get('detailed_emotion', '')
+                    group = sentiment_result.get('emotion_group', '')
+                else:
+                    emotion = sentiment_result.get('detailed_emotion', '')
+                    group = sentiment_result.get('emotion_group', '')
+                pos = 1 if sentiment_basic == 'positive' else 0
+                neu = 1 if sentiment_basic == 'neutral' else 0
+                neg = 1 if sentiment_basic == 'negative' else 0
+                other = 1 if sentiment_basic not in ('positive', 'neutral', 'negative') else 0
+                label_names = ['neutral', 'positive', 'negative', 'question']
+                sentiment = sentiment_basic
+                if sentiment not in label_names:
+                    sentiment = 'other'
+                row = {
+                    'text': text,
+                    'sentiment': sentiment
+                }
+                rows.append(row)
+        else:
+            # Not detailed mode: one row per comment
+            pos = 1 if sentiment_basic == 'positive' else 0
+            neu = 1 if sentiment_basic == 'neutral' else 0
+            neg = 1 if sentiment_basic == 'negative' else 0
+            other = 1 if sentiment_basic not in ('positive', 'neutral', 'negative') else 0
+            label_names = ['neutral', 'positive', 'negative', 'question']
+            sentiment = sentiment_basic
+            if sentiment not in label_names:
+                sentiment = 'other'
+            row = {
+                'text': text,
+                'sentiment': sentiment
+            }
+            rows.append(row)
+
         # Recursively add replies
         replies = c.get('replies', [])
         if replies:
