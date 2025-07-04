@@ -37,6 +37,41 @@ def analyze_detailed_sentiment(
     Returns:
         Dict ที่มีผลการวิเคราะห์
     """
+    # Check for sarcasm first using the enhanced detection
+    try:
+        from app import analyze_sarcasm, analyze_sentiment_builtin
+        sarcasm_result = analyze_sarcasm(text)
+        
+        # If sarcasm is detected, use the builtin analysis with sarcasm handling
+        if sarcasm_result.get('is_sarcastic', False):
+            result = analyze_sentiment_builtin(text, mode=mode, threshold=threshold)
+            formatted_result = {
+                "text": text,
+                "sentiment": result["sentiment"],
+                "confidence": result["confidence"],
+                "sentiment_score": result.get("sentiment_score", _sentiment_to_score(result["sentiment"])),
+                "detailed_emotion": result.get("detailed_emotion", "เฉย ๆ"),
+                "emotion_group": result.get("emotion_group", "Neutral"),
+                "context": result.get("context", {}),
+                "sarcasm_detected": True,
+                "sarcasm_reason": sarcasm_result.get('reason', ''),
+                "analysis_mode": mode,
+                "model_used": "builtin_with_sarcasm"
+            }
+            if mode == "multi":
+                formatted_result["detailed_emotions"] = result.get("detailed_emotions", [result.get("detailed_emotion", "เฉย ๆ")])
+                formatted_result["emotion_groups"] = result.get("emotion_groups", [result.get("emotion_group", "Neutral")])
+                formatted_result["primary_emotion"] = result.get("detailed_emotions", [result.get("detailed_emotion", "เฉย ๆ")])[0]
+                formatted_result["threshold"] = threshold
+            if include_scores:
+                formatted_result["all_scores"] = result.get("scores", {})
+            return formatted_result
+    except ImportError:
+        pass  # Fall back to original detailed analysis
+    except Exception as e:
+        print(f"Warning: Sarcasm detection failed: {e}")
+    
+    # Original detailed analysis for non-sarcastic text
     analyzer = get_detailed_analyzer()
     try:
         if mode == "single":
@@ -48,7 +83,8 @@ def analyze_detailed_sentiment(
                 "emotion_group": result.get("group", "Neutral"),
                 "confidence": result.get("confidence", 0.0),
                 "context": result.get("context", {}),
-                "analysis_mode": "single_label"
+                "analysis_mode": "single_label",
+                "model_used": "detailed_analyzer"
             }
             if include_scores:
                 formatted_result["all_scores"] = result.get("scores", {})
@@ -64,7 +100,8 @@ def analyze_detailed_sentiment(
                 "primary_emotion": primary_emotion,
                 "context": result.get("context", {}),
                 "threshold": threshold,
-                "analysis_mode": "multi_label"
+                "analysis_mode": "multi_label",
+                "model_used": "detailed_analyzer"
             }
             if include_scores:
                 formatted_result["all_scores"] = result.get("scores", {})
@@ -258,10 +295,14 @@ def get_sentiment_statistics(
                 for group in groups:
                     stats["emotion_group_counts"][group] = stats["emotion_group_counts"].get(group, 0) + 1
             
-            # นับ context
+            # นับ context (serialize dict เป็น string เพื่อใช้เป็น key)
             context = sentiment_data.get("context")
             if context:
-                stats["context_counts"][context] = stats["context_counts"].get(context, 0) + 1
+                if isinstance(context, dict):
+                    context_key = json.dumps(context, ensure_ascii=False, sort_keys=True)
+                else:
+                    context_key = str(context)
+                stats["context_counts"][context_key] = stats["context_counts"].get(context_key, 0) + 1
     
     return stats
 
@@ -313,27 +354,54 @@ def export_detailed_sentiment_results(
 def enhanced_analyze_sentiment(text: str) -> Dict[str, Any]:
     """
     ฟังก์ชันสำหรับ backward compatibility กับระบบเดิม
-    แต่ใช้ระบบ sentiment analysis ใหม่
+    เปลี่ยนเป็นใช้ AI Model จริง (detailed sentiment analyzer) เท่านั้น
+    แต่เพิ่ม fallback ไปยัง builtin analysis ที่มี sarcasm detection
     """
-    result = analyze_detailed_sentiment(
-        text, 
-        mode="single", 
-        threshold=0.3, 
-        include_scores=False
-    )
-    
-    # แปลงให้เข้ากับ format เดิม
-    return {
-        "sentiment": result["sentiment"],
-        "confidence": result["confidence"],
-        "sentiment_score": _sentiment_to_score(result["sentiment"]),
-        "model_type": "detailed_thai_sentiment",
-        
-        # ข้อมูลเพิ่มเติม
-        "detailed_emotion": result["detailed_emotion"],
-        "emotion_group": result["emotion_group"],
-        "context": result["context"]
-    }
+    try:
+        # Try detailed analysis first
+        result = analyze_detailed_sentiment(
+            text,
+            mode="single",
+            threshold=0.3,
+            include_scores=False
+        )
+        return {
+            "text": text,
+            "sentiment": result["sentiment"],
+            "confidence": result["confidence"],
+            "sentiment_score": _sentiment_to_score(result["sentiment"]),
+            "detailed_emotion": result.get("detailed_emotion", result.get("label", "")),
+            "emotion_group": result.get("emotion_group", result.get("group", "")),
+            "context": result.get("context", {})
+        }
+    except Exception as e:
+        # Fallback to builtin analysis with enhanced sarcasm detection
+        try:
+            from app import analyze_sentiment_builtin
+            result = analyze_sentiment_builtin(text, mode='single')
+            return {
+                "text": text,
+                "sentiment": result["sentiment"],
+                "confidence": result["confidence"],
+                "sentiment_score": result["sentiment_score"],
+                "detailed_emotion": result.get("detailed_emotion", "เฉย ๆ"),
+                "emotion_group": result.get("emotion_group", "Neutral"),
+                "context": result.get("context", {}),
+                "fallback_used": True,
+                "error": str(e)
+            }
+        except Exception as e2:
+            # Final fallback
+            return {
+                "text": text,
+                "sentiment": "neutral",
+                "confidence": 0.0,
+                "sentiment_score": 0.0,
+                "detailed_emotion": "เฉย ๆ",
+                "emotion_group": "Neutral",
+                "context": {},
+                "error": str(e2)
+            }
 
 def _sentiment_to_score(sentiment: str) -> float:
     """แปลง sentiment เป็น score เพื่อ compatibility"""
@@ -353,10 +421,75 @@ def demo_integration():
     
     # ทดสอบข้อความต่างๆ
     test_texts = [
-        "โกรธจนขำอะ! ทำไมต้องมาแบบนี้ด้วย 555 😡😂",
-        "ดีใจมากเลย รักเธอที่สุดเลย ❤️😍",
-        "ข้อมูลข่าวสารประจำวันครับ สถานการณ์ปกติดี",
-        "อ่อ... เยี่ยมจริงๆ เนอะ บริการดีมากเลย 🙄"
+        # Original examples
+        "โกรธจนขำอะ! ทำไมต้องมาแบบนี้ด้วย 555 😡😂",  # Mixed anger/laughter
+        "ดีใจมากเลย รักเธอที่สุดเลย ❤️😍",  # Clear positive
+        "ข้อมูลข่าวสารประจำวันครับ สถานการณ์ปกติดี",  # Neutral news
+        "อ่อ... เยี่ยมจริงๆ เนอะ บริการดีมากเลย 🙄",  # Sarcastic positive
+        "ตอนแรกก็คิดว่าดีนะ แต่พอใช้ไปใช้มาคือแบบ... ไม่ไหวอะ ห่วยแตกสิ้นดี",  # Negative with progression
+        
+        # New challenging additions from user feedback
+        "งานนี้สุดยอดครับ... ถ้าชอบความล้มเหลว",  # Ironic praise
+        "ประเทศไทยจะไม่เหมือนเดิม... แย่ลงทุกวัน",  # Negative with political nuance
+        "ขอบคุณนะคะที่ทำให้วันนี้เป็นวันที่แย่ที่สุดในชีวิต 😊",  # Positive words, negative meaning
+        "คิดถึงสมัยก่อนจัง... เมื่อประเทศยังมีอนาคต",  # Nostalgic + political critique
+        "บริการระดับห้าดาว... ในโลกคู่ขนาน",  # Sarcastic comparison
+        "ทำดีแล้วครับ... สำหรับคนที่มาตรฐานต่ำมาก",  # Backhanded compliment
+        "ภูมิใจในตัวคุณ... ที่เป็นต้นเหตุของปัญหาทุกอย่าง",  # False praise
+        "อนาคตสดใสแน่นอน... ถ้ายังทำแบบนี้ต่อไป",  # Negative prediction disguised as positive
+        "นโยบายสร้างสรรค์มาก... สำหรับคนที่ไม่อยากให้ประเทศพัฒนา",  # Political sarcasm
+        "สุดยอดประสบการณ์... ที่ไม่อยากให้ใครเจอ",  # Ironic experience
+        "ดีใจด้วยนะ... ที่ได้เป็นส่วนหนึ่งของความล้มเหลวนี้",  # Mocking congratulations
+        "เก่งมาก... เก่งจนทำให้แย่ลง",  # Paradoxical compliment
+        "น่าประทับใจจริงๆ... ในความไร้ความสามารถ",  # Admiring incompetence
+        "ขอชื่นชม... ความพยายามที่จะทำให้ล้มเหลว",  # Praising failure
+        "ดีกว่าเพื่อน... ถ้าเพื่อนคนนั้นแย่สุดๆ",  # Relative negativity
+        "ไม่น่าเชื่อว่าทำได้... แย่ขนาดนี้",  # Surprised disappointment
+        "พัฒนาการที่ดี... ในการเดินถอยหลัง",  # Ironic progress
+
+        # Sarcasm focused on "Praise -> Insult" structure
+        "เป็นความคิดที่ดีมาก... สำหรับคนที่ไม่คิดอะไรเลย", # Sarcastic praise
+        "ชุดนี้สวยจัง... ถ้าจะไปงานแฟนซี", # Backhanded compliment on appearance
+        "เสียงเพราะมาก... จนอยากปิดหู", # Ironic compliment on sound
+        "เขียนดีนะ... ถ้าไม่นับว่าอ่านไม่รู้เรื่อง", # Sarcastic feedback on writing
+        "ฉลาดเป็นกรด... แต่กัดกร่อนทุกอย่าง", # Compliment with a destructive consequence
+
+        # Sarcasm/Irony with English
+        "The service is 'amazing'. Waited 20 minutes for a glass of water.",
+        "Oh, great. Another meeting. Just what I needed.",
+        "I love it when my code breaks for no reason. So fun.",
+        "This is just perfect. I lost my keys.",
+
+        # New Use Cases for Comprehensive Testing
+        # -----------------------------------------
+
+        # 1. Double Negatives (should be neutral or slightly positive)
+        "ก็ไม่ได้ไม่ชอบนะ ก็โอเค",
+        "ถามว่าเกลียดไหม ก็ไม่นะ แต่ก็ไม่ได้ชอบ",
+
+        # 2. Reported Speech (sentiment should be from the speaker)
+        "เพื่อนบอกว่าหนังสนุกมาก แต่ส่วนตัวเราเฉยๆ อะ",
+        "ใครๆ ก็ชมว่าสวย แต่เราว่ามันดูธรรมดาไปหน่อย",
+        "เห็นรีวิวบอกว่าร้านนี้เด็ดมาก พอลองแล้วก็งั้นๆ",
+
+        # 3. Rhetorical Questions (often imply strong sentiment)
+        "ทำกันได้ลงคอเนอะ?", # Negative
+        "แล้วใครจะไปทนกับเรื่องแบบนี้ได้!?", # Negative
+        "สวยขนาดนี้ ไม่ให้ชอบได้ไง", # Positive
+
+        # 4. Balanced Mixed Opinions (not sarcastic)
+        "อาหารอร่อยนะ แต่บริการช้าไปนิดนึง โดยรวมก็โอเค",
+        "วิวสวยมาก แต่ทางขึ้นลำบากไปหน่อย",
+        "ชอบดีไซน์นะ แต่ติดที่ราคาแรงไปนิด",
+
+        # 5. Imperative Sentences (Commands/Requests - usually neutral)
+        "ช่วยส่งเอกสารให้ด้วยค่ะ",
+        "รบกวนช่วยเงียบๆ หน่อยครับ",
+        "อย่าลืมปิดไฟนะ",
+
+        # 6. Informal/Misspelled words
+        "จิงๆ ก้อดีนะ ชอบมั่กๆ", # จริงๆ ก็ดีนะ ชอบมากๆ (Positive)
+        "ทัมมัยทำแบบนี้", # ทำไมทำแบบนี้ (Negative/Question)
     ]
     
     print("\n📍 Single Label Analysis:")

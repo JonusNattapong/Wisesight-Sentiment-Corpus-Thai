@@ -1,14 +1,3 @@
-# manual mapping: ช่องที่ API/HTML หา channelId ไม่ได้
-manual_channel_ids = {
-    'one31': 'UC8pPz5w69fQvM2U6pP2zjXg',
-    'workpoint': 'UC7dF9qfBMXrSlaaFFDvV_Yg',
-    'thairath': 'UC6n8I1i5pGSKcHzH3O5l5QA',
-    'ch3thailand': 'UCQWQWEdK1qFqKkHcE-1r5Aw',
-    'ch7hd': 'UCQIM1u6b6t1tQpTg4pG8rYw',
-    'amarintv': 'UCwssGZKXJQp6pFhQb6h6Q2A',
-    'thaipbs': 'UCQvYXeZbQ5b0rxcdbpL6d8g',
-    # เพิ่มช่องอื่น ๆ ตามต้องการ
-}
 import subprocess
 import sys
 import requests
@@ -131,7 +120,7 @@ channels = {
     
 }
 
-def get_youtube_videos_from_channel(channel_url, max_videos=35):  # ลดจาก 35 เป็น 25 เพื่อความเสถียร
+def get_youtube_videos_from_channel(channel_url, max_videos=120):  # เพิ่มเป็น 120 เพื่อให้เลือกคลิปที่มีคอมเมนต์เยอะ
     """
     ดึงลิงก์วิดีโอจากช่อง YouTube โดยใช้ web scraping (ปรับปรุงความเสถียร)
     """
@@ -169,7 +158,7 @@ def get_youtube_videos_from_channel(channel_url, max_videos=35):  # ลดจา
         return []
 
 
-def get_youtube_videos_from_api(channel_id_or_username, api_key=None, max_results=20, channel_key=None):
+def get_youtube_videos_from_api(channel_id_or_username, api_key=None, max_results=10, channel_key=None):
     """
     ดึงลิงก์วิดีโอล่าสุดจากช่อง YouTube ด้วย web scraping เท่านั้น (ไม่ใช้ API)
     channel_id_or_username: channel id (UC...), @username, หรือ url (https://www.youtube.com/@username)
@@ -278,23 +267,19 @@ if not api_key or api_key == "your_api_key_here":
     exit(1)
 
 # Update the main video-fetching loop to use scraping only, no channelId resolving
-num_per_channel = 20  # จำนวนลิงก์ล่าสุดต่อช่อง (ปรับได้)
+num_per_channel = 10  # จำนวนลิงก์ล่าสุดต่อช่อง (ปรับได้)
 per_channel_links = {}
 all_links = []
 successful_channels = 0
 total_channels = len(channels)
 for i, (channel_name, channel_url) in enumerate(channels.items(), 1):
     print(f"\n📺 Fetching videos for: {channel_name} ({i}/{total_channels})")
-    videos = get_youtube_videos_from_api(channel_url, max_results=40, channel_key=channel_name)  # ดึงเยอะขึ้นเพื่อคัด top
-    video_comment_pairs = []
-    for v in videos:
-        count = get_comment_count(v)
-        print(f"    {v}  |  ความคิดเห็น: {count}")
-        video_comment_pairs.append((v, count))
-        time.sleep(0.2)
-    # sort by comment count desc, pick top N
-    video_comment_pairs.sort(key=lambda x: x[1], reverse=True)
-    top_videos = [v for v, c in video_comment_pairs[:num_per_channel]]
+    import random
+    videos = get_youtube_videos_from_api(channel_url, max_results=120, channel_key=channel_name)
+    if len(videos) > num_per_channel:
+        top_videos = random.sample(videos, num_per_channel)
+    else:
+        top_videos = videos
     if top_videos:
         per_channel_links[channel_name] = top_videos
         all_links.extend(top_videos)

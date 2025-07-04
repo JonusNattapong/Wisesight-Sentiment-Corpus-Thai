@@ -1,0 +1,348 @@
+{
+  "system_info": {
+    "detailed_available": true,
+    "integration_available": true,
+    "emotion_labels_count": 20,
+    "emotion_groups_count": 4
+  },
+  "tests": {
+    "basic_functionality": {
+      "total_tests": 14,
+      "single_label_accuracy": 85.71428571428571,
+      "multi_label_accuracy": 100.0,
+      "sentiment_mapping_accuracy": 92.85714285714286,
+      "failed_cases": [
+        {
+          "case_id": 9,
+          "text": "อ่อ... ดีจริงๆ เนอะ บริการเยี่ยมมาก 🙄",
+          "single_predicted": "รำคาญ",
+          "single_expected": "ประชด",
+          "single_match": false,
+          "multi_predicted": [
+            "เสียดสี",
+            "รำคาญ",
+            "ประชด"
+          ],
+          "multi_expected": [
+            "ประชด"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "negative",
+          "sentiment_expected": "negative",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 12,
+          "text": "โกรธจนขำอะ! ทำไมต้องมาแบบนี้ด้วย 555 😡😂",
+          "single_predicted": "ขำขัน",
+          "single_expected": "โกรธ",
+          "single_match": false,
+          "multi_predicted": [
+            "ขำขัน"
+          ],
+          "multi_expected": [
+            "ขำขัน",
+            "โกรธ"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "positive",
+          "sentiment_expected": "negative",
+          "sentiment_match": false,
+          "confidence": 1.0
+        }
+      ],
+      "detailed_results": [
+        {
+          "case_id": 1,
+          "text": "ดีใจมากเลย! รักมาก ❤️😍",
+          "single_predicted": "ดีใจ",
+          "single_expected": "ดีใจ",
+          "single_match": true,
+          "multi_predicted": [
+            "ชอบ",
+            "รัก",
+            "ดีใจ"
+          ],
+          "multi_expected": [
+            "รัก",
+            "ดีใจ"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "positive",
+          "sentiment_expected": "positive",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 2,
+          "text": "ซึ้งใจมากเลย น้ำตาซึม ประทับใจจริงๆ 😭💞",
+          "single_predicted": "ซึ้งใจ",
+          "single_expected": "ซึ้งใจ",
+          "single_match": true,
+          "multi_predicted": [
+            "ซึ้งใจ"
+          ],
+          "multi_expected": [
+            "ซึ้งใจ"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "positive",
+          "sentiment_expected": "positive",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 3,
+          "text": "โอเค ใช้ได้ ปกติดี พอใจ",
+          "single_predicted": "พอใจ",
+          "single_expected": "พอใจ",
+          "single_match": true,
+          "multi_predicted": [
+            "พอใจ",
+            "เฉย ๆ"
+          ],
+          "multi_expected": [
+            "พอใจ"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "positive",
+          "sentiment_expected": "positive",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 4,
+          "text": "โกรธมากเลย! ห่วยแตกแล้วจริงๆ 😡🤬",
+          "single_predicted": "โกรธ",
+          "single_expected": "โกรธ",
+          "single_match": true,
+          "multi_predicted": [
+            "เกลียด",
+            "โกรธ"
+          ],
+          "multi_expected": [
+            "โกรธ"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "negative",
+          "sentiment_expected": "negative",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 5,
+          "text": "เศร้าใจมาก เสียใจจริงๆ ผิดหวังมาก 😢💔",
+          "single_predicted": "เสียใจ",
+          "single_expected": "เสียใจ",
+          "single_match": true,
+          "multi_predicted": [
+            "เสียใจ",
+            "ผิดหวัง"
+          ],
+          "multi_expected": [
+            "เสียใจ",
+            "ผิดหวัง"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "negative",
+          "sentiment_expected": "negative",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 6,
+          "text": "กลัวมากเลย ตกใจจริงๆ หวาดเสียว 😱😨",
+          "single_predicted": "กลัว",
+          "single_expected": "กลัว",
+          "single_match": true,
+          "multi_predicted": [
+            "กลัว",
+            "ตกใจ"
+          ],
+          "multi_expected": [
+            "กลัว",
+            "ตกใจ"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "negative",
+          "sentiment_expected": "negative",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 7,
+          "text": "ข้อมูลข่าวสารประจำวัน สถานการณ์ปกติดี",
+          "single_predicted": "ข้อมูลข่าวสาร",
+          "single_expected": "ข้อมูลข่าวสาร",
+          "single_match": true,
+          "multi_predicted": [
+            "พอใจ",
+            "ข้อมูลข่าวสาร",
+            "เฉย ๆ"
+          ],
+          "multi_expected": [
+            "ข้อมูลข่าวสาร"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "neutral",
+          "sentiment_expected": "neutral",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 8,
+          "text": "เฉยๆ ธรรมดา ไม่รู้สึกอะไร",
+          "single_predicted": "เฉย ๆ",
+          "single_expected": "เฉย ๆ",
+          "single_match": true,
+          "multi_predicted": [
+            "ไม่รู้สึกอะไร",
+            "เฉย ๆ"
+          ],
+          "multi_expected": [
+            "เฉย ๆ"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "neutral",
+          "sentiment_expected": "neutral",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 9,
+          "text": "อ่อ... ดีจริงๆ เนอะ บริการเยี่ยมมาก 🙄",
+          "single_predicted": "รำคาญ",
+          "single_expected": "ประชด",
+          "single_match": false,
+          "multi_predicted": [
+            "เสียดสี",
+            "รำคาญ",
+            "ประชด"
+          ],
+          "multi_expected": [
+            "ประชด"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "negative",
+          "sentiment_expected": "negative",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 10,
+          "text": "ขำมากเลย! ตลกดี 555 😂🤣",
+          "single_predicted": "ขำขัน",
+          "single_expected": "ขำขัน",
+          "single_match": true,
+          "multi_predicted": [
+            "ขำขัน"
+          ],
+          "multi_expected": [
+            "ขำขัน"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "positive",
+          "sentiment_expected": "positive",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 11,
+          "text": "สับสนมาก งงเลย เข้าใจไม่ได้ 🤔😵‍💫",
+          "single_predicted": "สับสน",
+          "single_expected": "สับสน",
+          "single_match": true,
+          "multi_predicted": [
+            "สับสน"
+          ],
+          "multi_expected": [
+            "สับสน"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "neutral",
+          "sentiment_expected": "neutral",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 12,
+          "text": "โกรธจนขำอะ! ทำไมต้องมาแบบนี้ด้วย 555 😡😂",
+          "single_predicted": "ขำขัน",
+          "single_expected": "โกรธ",
+          "single_match": false,
+          "multi_predicted": [
+            "ขำขัน"
+          ],
+          "multi_expected": [
+            "ขำขัน",
+            "โกรธ"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "positive",
+          "sentiment_expected": "negative",
+          "sentiment_match": false,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 13,
+          "text": "ประชดเก่งมาก เสียดสีจนเศร้า ใจร้าย",
+          "single_predicted": "ประชด",
+          "single_expected": "ประชด",
+          "single_match": true,
+          "multi_predicted": [
+            "เสียดสี",
+            "เสียใจ",
+            "ประชด"
+          ],
+          "multi_expected": [
+            "เสียใจ",
+            "ประชด"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "negative",
+          "sentiment_expected": "negative",
+          "sentiment_match": true,
+          "confidence": 1.0
+        },
+        {
+          "case_id": 14,
+          "text": "ชอบมาก แต่ก็ผิดหวังนิดหน่อย เอาแต่ใจ",
+          "single_predicted": "ชอบ",
+          "single_expected": "ชอบ",
+          "single_match": true,
+          "multi_predicted": [
+            "ชอบ",
+            "ผิดหวัง"
+          ],
+          "multi_expected": [
+            "ชอบ",
+            "ผิดหวัง"
+          ],
+          "multi_match": true,
+          "sentiment_predicted": "positive",
+          "sentiment_expected": "positive",
+          "sentiment_match": true,
+          "confidence": 1.0
+        }
+      ]
+    },
+    "integration": {
+      "tests_passed": 8,
+      "tests_failed": 0,
+      "errors": []
+    },
+    "training_data": {
+      "tests_passed": 4,
+      "tests_failed": 0,
+      "errors": []
+    },
+    "edge_cases": {
+      "tests_passed": 9,
+      "tests_failed": 0,
+      "errors": []
+    }
+  },
+  "overall_status": "PASSED",
+  "components_passed": 5
+}
